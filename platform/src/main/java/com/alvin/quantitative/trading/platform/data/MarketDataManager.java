@@ -1,5 +1,6 @@
-package com.alvin.quantitative.trading.platform;
+package com.alvin.quantitative.trading.platform.data;
 
+import com.alvin.quantitative.trading.platform.core.KlineData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * retail investors, Manages real-time market data and calculates technical
  * indicators
  */
-class MarketDataManager {
+public class MarketDataManager {
 	private final Map<String, Queue<KlineData>> dataBuffers;
 	private final Map<String, Map<String, Double>> technicalIndicators;
 	private final int maxBufferSize;

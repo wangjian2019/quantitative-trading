@@ -1,0 +1,162 @@
+{
+  "portfolio": {
+    "name": "Alvin的AI量化投资组合",
+    "description": "个人量化交易监控组合",
+    "created_date": "2024-09-13",
+    "notification_email": "wangjians8813@gmail.com",
+    "risk_tolerance": "moderate",
+    "max_position_size": 0.2,
+    "stop_loss_threshold": 0.08,
+    "take_profit_threshold": 0.15
+  },
+  "symbols": [
+    {
+      "symbol": "ASML",
+      "name": "阿斯麦控股",
+      "type": "stock",
+      "sector": "Technology/Semiconductors",
+      "weight": 0.08,
+      "priority": "high",
+      "min_confidence": 0.75,
+      "notes": "半导体设备龙头，AI芯片制造关键"
+    },
+    {
+      "symbol": "NBIS", 
+      "name": "Nebius Group",
+      "type": "stock",
+      "sector": "Technology/Cloud",
+      "weight": 0.06,
+      "priority": "medium",
+      "min_confidence": 0.7,
+      "notes": "云计算和AI基础设施"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "特斯拉",
+      "type": "stock",
+      "sector": "Automotive/Energy",
+      "weight": 0.10,
+      "priority": "high",
+      "min_confidence": 0.75,
+      "notes": "电动车和清洁能源领导者"
+    },
+    {
+      "symbol": "SE",
+      "name": "Sea Limited",
+      "type": "stock",
+      "sector": "E-commerce/Gaming",
+      "weight": 0.08,
+      "priority": "medium",
+      "min_confidence": 0.7,
+      "notes": "东南亚电商和游戏巨头"
+    },
+    {
+      "symbol": "GRAB",
+      "name": "Grab Holdings",
+      "type": "stock",
+      "sector": "Transportation/Fintech",
+      "weight": 0.06,
+      "priority": "medium",
+      "min_confidence": 0.65,
+      "notes": "东南亚超级应用平台"
+    },
+    {
+      "symbol": "QQQ",
+      "name": "Invesco QQQ ETF",
+      "type": "etf",
+      "sector": "Technology",
+      "weight": 0.15,
+      "priority": "high",
+      "min_confidence": 0.6,
+      "notes": "纳斯达克100指数基金，科技股集中"
+    },
+    {
+      "symbol": "VOO",
+      "name": "Vanguard S&P 500 ETF",
+      "type": "etf",
+      "sector": "Broad Market",
+      "weight": 0.15,
+      "priority": "high",
+      "min_confidence": 0.55,
+      "notes": "标普500指数基金，低费率"
+    },
+    {
+      "symbol": "MRVL",
+      "name": "Marvell Technology",
+      "type": "stock",
+      "sector": "Technology/Semiconductors",
+      "weight": 0.07,
+      "priority": "medium",
+      "min_confidence": 0.7,
+      "notes": "数据中心和5G芯片"
+    },
+    {
+      "symbol": "3690.HK",
+      "name": "美团-W",
+      "type": "stock",
+      "sector": "E-commerce/Delivery",
+      "weight": 0.08,
+      "priority": "medium",
+      "min_confidence": 0.7,
+      "notes": "中国本地生活服务平台"
+    },
+    {
+      "symbol": "HIMS",
+      "name": "Hims & Hers Health",
+      "type": "stock",
+      "sector": "Healthcare/Telemedicine",
+      "weight": 0.05,
+      "priority": "low",
+      "min_confidence": 0.75,
+      "notes": "远程医疗和健康服务"
+    },
+    {
+      "symbol": "FPE",
+      "name": "First Trust Preferred Securities and Income ETF",
+      "type": "etf",
+      "sector": "Fixed Income",
+      "weight": 0.06,
+      "priority": "low",
+      "min_confidence": 0.6,
+      "notes": "优先股和固定收益ETF"
+    },
+    {
+      "symbol": "NKE",
+      "name": "耐克",
+      "type": "stock",
+      "sector": "Consumer Goods/Apparel",
+      "weight": 0.06,
+      "priority": "medium",
+      "min_confidence": 0.65,
+      "notes": "全球运动品牌龙头"
+    }
+  ],
+  "trading_rules": {
+    "max_daily_trades": 3,
+    "min_holding_period_hours": 24,
+    "max_portfolio_risk": 0.15,
+    "rebalance_frequency_days": 30,
+    "backtest_period_years": 3,
+    "notification_triggers": {
+      "strong_buy": 0.85,
+      "strong_sell": 0.85,
+      "portfolio_loss": 0.05,
+      "portfolio_gain": 0.10
+    }
+  },
+  "notification_settings": {
+    "email": {
+      "enabled": true,
+      "address": "wangjians8813@gmail.com",
+      "send_daily_summary": true,
+      "send_trade_signals": true,
+      "send_performance_reports": true
+    },
+    "wechat": {
+      "enabled": true,
+      "webhook_url": "YOUR_WECHAT_BOT_WEBHOOK",
+      "send_immediate_alerts": true,
+      "send_daily_summary": false
+    }
+  }
+}

@@ -19,9 +19,33 @@ from datetime import datetime, timedelta
 import logging
 import os
 import json
+from config import config
+from services.simple_notification_service import create_simple_notification_service
 
 warnings.filterwarnings('ignore')
-logging.basicConfig(level=logging.INFO)
+
+# Configure logging using config
+log_config = config.get_logging_config()
+import logging.handlers
+
+# Create logs directory
+os.makedirs('logs', exist_ok=True)
+
+# Setup rotating file handler
+file_handler = logging.handlers.RotatingFileHandler(
+    log_config['file_path'], 
+    maxBytes=log_config['max_file_size'],
+    backupCount=log_config['backup_count']
+)
+
+logging.basicConfig(
+    level=getattr(logging, log_config['level']),
+    format=log_config['format'],
+    handlers=[
+        logging.StreamHandler(),
+        file_handler
+    ]
+)
 
 app = Flask(__name__)
 
@@ -38,6 +62,8 @@ class AdvancedAIStrategy:
         self.feature_columns = []
         self.model_performance = {}
         self.is_trained = False
+        self.config = config.get_model_config()
+        self.trading_config = config.get_trading_config()
 
         # Multi-model ensemble
         self.base_models = {
@@ -46,8 +72,11 @@ class AdvancedAIStrategy:
             'lr': LogisticRegression(random_state=42, max_iter=1000)
         }
 
-        # Model weights for ensemble
-        self.model_weights = {'rf': 0.4, 'gb': 0.4, 'lr': 0.2}
+        # Model weights for ensemble from config
+        self.model_weights = self.config['ensemble_weights']
+        
+        # Create model save directory
+        os.makedirs(self.config['save_path'], exist_ok=True)
 
     def prepare_features(self, current_data, indicators, history):
         """
@@ -73,10 +102,10 @@ class AdvancedAIStrategy:
             # 2. RSI and overbought/oversold conditions
             rsi = indicators.get('RSI', 50)
             features['rsi'] = rsi / 100.0  # Normalize to 0-1
-            features['rsi_oversold'] = 1 if rsi < 30 else 0
-            features['rsi_overbought'] = 1 if rsi > 70 else 0
+            features['rsi_oversold'] = 1 if rsi < self.trading_config['rsi_oversold'] else 0
+            features['rsi_overbought'] = 1 if rsi > self.trading_config['rsi_overbought'] else 0
             features['rsi_neutral'] = 1 if 40 <= rsi <= 60 else 0
-            features['rsi_extreme'] = 1 if rsi < 20 or rsi > 80 else 0
+            features['rsi_extreme'] = 1 if rsi < self.trading_config['rsi_extreme_low'] or rsi > self.trading_config['rsi_extreme_high'] else 0
 
             # 3. MACD trend analysis
             macd = indicators.get('MACD', 0)
@@ -220,8 +249,9 @@ class AdvancedAIStrategy:
         Author: Alvin
         """
         try:
-            if len(historical_data) < 100:
-                logging.warning("Insufficient historical data for training")
+            min_data = self.config['min_training_data']
+            if len(historical_data) < min_data:
+                logging.warning(f"Insufficient historical data for training: {len(historical_data)} < {min_data}")
                 return False
 
             # Prepare training data
@@ -244,11 +274,12 @@ class AdvancedAIStrategy:
                 current_price = current['close']
 
                 price_change = (future_price - current_price) / current_price
+                threshold = self.trading_config['price_change_threshold']
 
                 # Multi-class classification: 0=SELL, 1=HOLD, 2=BUY
-                if price_change > 0.015:  # 1.5% up
+                if price_change > threshold:  # threshold% up
                     label = 2  # BUY
-                elif price_change < -0.015:  # 1.5% down
+                elif price_change < -threshold:  # threshold% down
                     label = 0  # SELL
                 else:
                     label = 1  # HOLD
@@ -515,25 +546,31 @@ class AdvancedAIStrategy:
     def save_models(self):
         """Save trained models to disk"""
         try:
-            if not os.path.exists('models'):
-                os.makedirs('models')
+            save_path = self.config['save_path']
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
 
             for model_name, model in self.models.items():
-                joblib.dump(model, f'models/{model_name}_model.pkl')
+                joblib.dump(model, f'{save_path}/{model_name}_model.pkl')
 
-            joblib.dump(self.scalers['main'], 'models/scaler.pkl')
+            joblib.dump(self.scalers['main'], f'{save_path}/scaler.pkl')
 
             # Save metadata
             metadata = {
                 'feature_columns': self.feature_columns,
                 'model_performance': self.model_performance,
-                'is_trained': self.is_trained
+                'is_trained': self.is_trained,
+                'config_snapshot': {
+                    'ensemble_weights': self.model_weights,
+                    'price_change_threshold': self.trading_config['price_change_threshold'],
+                    'min_confidence': self.trading_config['min_confidence']
+                }
             }
 
-            with open('models/metadata.json', 'w') as f:
-                json.dump(metadata, f)
+            with open(f'{save_path}/metadata.json', 'w') as f:
+                json.dump(metadata, f, indent=2)
 
-            logging.info("Models saved successfully")
+            logging.info(f"Models saved successfully to {save_path}")
 
         except Exception as e:
             logging.error(f"Error saving models: {e}")
@@ -541,27 +578,40 @@ class AdvancedAIStrategy:
     def load_models(self):
         """Load trained models from disk"""
         try:
-            if not os.path.exists('models/metadata.json'):
+            save_path = self.config['save_path']
+            metadata_path = f'{save_path}/metadata.json'
+            
+            if not os.path.exists(metadata_path):
+                logging.info(f"No existing models found at {save_path}")
                 return False
 
             # Load metadata
-            with open('models/metadata.json', 'r') as f:
+            with open(metadata_path, 'r') as f:
                 metadata = json.load(f)
 
             self.feature_columns = metadata['feature_columns']
             self.model_performance = metadata['model_performance']
             self.is_trained = metadata['is_trained']
+            
+            # Check for config compatibility
+            if 'config_snapshot' in metadata:
+                config_snapshot = metadata['config_snapshot']
+                logging.info(f"Model trained with config: {config_snapshot}")
 
             # Load models
             for model_name in self.base_models.keys():
-                if os.path.exists(f'models/{model_name}_model.pkl'):
-                    self.models[model_name] = joblib.load(f'models/{model_name}_model.pkl')
+                model_path = f'{save_path}/{model_name}_model.pkl'
+                if os.path.exists(model_path):
+                    self.models[model_name] = joblib.load(model_path)
+                    logging.info(f"Loaded model: {model_name}")
 
             # Load scaler
-            if os.path.exists('models/scaler.pkl'):
-                self.scalers['main'] = joblib.load('models/scaler.pkl')
+            scaler_path = f'{save_path}/scaler.pkl'
+            if os.path.exists(scaler_path):
+                self.scalers['main'] = joblib.load(scaler_path)
+                logging.info("Loaded scaler")
 
-            logging.info("Models loaded successfully")
+            logging.info(f"Models loaded successfully from {save_path}")
             return True
 
         except Exception as e:
@@ -570,6 +620,39 @@ class AdvancedAIStrategy:
 
 # Global strategy instance
 strategy = AdvancedAIStrategy()
+
+# Global notification service
+# 📧 Gmail配置说明:
+# 1. 访问 https://myaccount.google.com/security
+# 2. 开启两步验证
+# 3. 生成应用专用密码（16位）
+# 4. 将密码填入下方password字段（去掉空格）
+
+# 💬 微信配置说明:
+# 方法1 - Server酱(推荐): https://sct.ftqq.com/
+# 获取SendKey后使用格式: https://sctapi.ftqq.com/你的SendKey.send
+# 
+# 方法2 - 企业微信群机器人:
+# 创建企业微信群 -> 添加群机器人 -> 复制Webhook URL
+
+notification_config = {
+    'email': {
+        'enabled': True,  # 改为False可禁用邮件通知
+        'username': 'wangjians8813@gmail.com',        # 你的Gmail地址
+        'password': 'YOUR_16_DIGIT_APP_PASSWORD_HERE', # 🔑 请替换为Gmail应用专用密码（16位，无空格）
+        'address': 'wangjians8813@gmail.com',          # 接收邮件的地址
+        'smtp_host': 'smtp.gmail.com',
+        'smtp_port': 587,
+        'send_daily_summary': True
+    },
+    'wechat': {
+        'enabled': True,  # 改为False可禁用微信通知
+        'webhook_url': 'YOUR_WECHAT_BOT_WEBHOOK_HERE'  # 🔗 请替换为实际的Webhook URL
+    },
+    'min_notification_confidence': 0.75  # 只有置信度≥75%的信号才会发送通知
+}
+
+notification_service = create_notification_service(notification_config)
 
 @app.route('/get_signal', methods=['POST'])
 def get_signal():
@@ -587,6 +670,21 @@ def get_signal():
 
         # Generate signal
         result = strategy.generate_signal(current_data, indicators, history)
+        
+        # Send notification for high confidence signals
+        if result.get('confidence', 0) >= notification_config.get('min_notification_confidence', 0.75):
+            try:
+                signal_data = {
+                    'symbol': data.get('symbol', 'Unknown'),
+                    'action': result.get('action'),
+                    'price': current_data.get('close', 0),
+                    'confidence': result.get('confidence'),
+                    'reason': result.get('reason'),
+                    'timestamp': datetime.now().isoformat()
+                }
+                notification_service.send_trading_signal_notification(signal_data)
+            except Exception as e:
+                logging.error(f"Failed to send notification: {e}")
 
         return jsonify(result)
 
@@ -970,6 +1068,118 @@ def get_sample_data():
             'error': f'Error generating sample data: {str(e)}'
         }), 500
 
+@app.route('/send_test_notification', methods=['POST'])
+def send_test_notification():
+    """
+    Send test notification
+    Author: Alvin
+    """
+    try:
+        data = request.json
+        notification_type = data.get('type', 'email')
+        message = data.get('message', 'This is a test notification from AI Trading Platform')
+        
+        if notification_type == 'email':
+            success = notification_service.send_email_notification(
+                'Test Notification', 
+                message
+            )
+        elif notification_type == 'wechat':
+            success = notification_service.send_wechat_notification(message)
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Invalid notification type'
+            }), 400
+        
+        return jsonify({
+            'success': success,
+            'message': 'Test notification sent' if success else 'Failed to send notification'
+        })
+        
+    except Exception as e:
+        logging.error(f"Test notification error: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }), 500
+
+@app.route('/notification_config', methods=['GET', 'POST'])
+def notification_config_api():
+    """
+    Get or update notification configuration
+    Author: Alvin
+    """
+    global notification_config, notification_service
+    
+    if request.method == 'GET':
+        # Return current config (without sensitive data)
+        safe_config = {
+            'email': {
+                'enabled': notification_config['email']['enabled'],
+                'address': notification_config['email']['address'],
+                'send_daily_summary': notification_config['email']['send_daily_summary']
+            },
+            'wechat': {
+                'enabled': notification_config['wechat']['enabled'],
+                'webhook_configured': bool(notification_config['wechat']['webhook_url'])
+            },
+            'min_notification_confidence': notification_config['min_notification_confidence']
+        }
+        return jsonify(safe_config)
+    
+    elif request.method == 'POST':
+        try:
+            new_config = request.json
+            
+            # Update configuration
+            if 'email' in new_config:
+                notification_config['email'].update(new_config['email'])
+            if 'wechat' in new_config:
+                notification_config['wechat'].update(new_config['wechat'])
+            if 'min_notification_confidence' in new_config:
+                notification_config['min_notification_confidence'] = new_config['min_notification_confidence']
+            
+            # Recreate notification service with new config
+            notification_service = create_notification_service(notification_config)
+            
+            return jsonify({
+                'success': True,
+                'message': 'Notification configuration updated'
+            })
+            
+        except Exception as e:
+            logging.error(f"Config update error: {e}")
+            return jsonify({
+                'success': False,
+                'message': f'Error updating config: {str(e)}'
+            }), 500
+
+@app.route('/send_portfolio_alert', methods=['POST'])
+def send_portfolio_alert():
+    """
+    Send portfolio alert notification
+    Author: Alvin
+    """
+    try:
+        data = request.json
+        portfolio_data = data.get('portfolio_data', {})
+        alert_type = data.get('alert_type', 'info')
+        
+        success = notification_service.send_portfolio_alert(portfolio_data, alert_type)
+        
+        return jsonify({
+            'success': success,
+            'message': 'Portfolio alert sent' if success else 'Failed to send alert'
+        })
+        
+    except Exception as e:
+        logging.error(f"Portfolio alert error: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }), 500
+
 @app.route('/quick_test', methods=['POST'])
 def quick_test():
     """
@@ -1031,13 +1241,13 @@ if __name__ == '__main__':
     print("Author: Alvin")
     print("="*60)
     print("Starting Python AI service...")
-    print("Required packages: flask pandas numpy scikit-learn joblib")
-    print("Install with: pip install flask pandas numpy scikit-learn joblib")
+    print("Configuration loaded from config.py and environment")
     print("="*60)
 
     # Try to load existing models
     if strategy.load_models():
         print("✓ Existing models loaded successfully")
+        print(f"✓ Model performance: {strategy.model_performance}")
     else:
         print("ℹ No existing models found - will train on first use")
 
@@ -1053,5 +1263,16 @@ if __name__ == '__main__':
     print("  GET  /generate_sample_data - Generate test data")
     print("="*60)
 
+    # Get Flask configuration
+    flask_config = config.get_flask_config()
+    print(f"Starting Flask server on {flask_config['host']}:{flask_config['port']}")
+    print(f"Debug mode: {flask_config['debug']}")
+    print("="*60)
+
     # Start the Flask application
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+    app.run(
+        host=flask_config['host'], 
+        port=flask_config['port'], 
+        debug=flask_config['debug'], 
+        threaded=flask_config['threaded']
+    )

@@ -1,4 +1,4 @@
-package com.alvin.quantitative.trading.platform;
+package com.alvin.quantitative.trading.platform.core;
 
 public class Position {
     private String symbol;
