@@ -22,7 +22,7 @@ class Config:
             # Flask服务配置
             'flask': {
                 'host': '0.0.0.0',
-                'port': 5000,
+                'port': 5001,  # 改用5001端口避免AirPlay冲突
                 'debug': False,
                 'threaded': True
             },
