@@ -1,8 +1,9 @@
-package com.alvin.quantitative.trading.platform;
+package com.alvin.quantitative.trading.platform.strategy;
 
-import com.alvin.quantitative.trading.platform.config.ConfigManager;
+import com.alvin.quantitative.trading.platform.config.ApplicationConfig;
 import com.alvin.quantitative.trading.platform.core.AISignal;
 import com.alvin.quantitative.trading.platform.core.KlineData;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.http.HttpEntity;
@@ -28,11 +29,11 @@ public class AIStrategyClient {
     private final CloseableHttpClient httpClient;
     private final String apiUrl;
     private final ObjectMapper objectMapper;
-    private final ConfigManager config;
+    private final ApplicationConfig config;
     private int retryCount = 0;
     
     public AIStrategyClient(String apiUrl) {
-        this.config = ConfigManager.getInstance();
+        this.config = ApplicationConfig.getInstance();
         
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(config.getAiServiceConnectTimeout())

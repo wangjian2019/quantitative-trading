@@ -1,0 +1,58 @@
+{
+  "feature_columns": [
+    "ma5_ratio",
+    "ma10_ratio",
+    "ma20_ratio",
+    "ma_slope",
+    "ma_convergence",
+    "rsi",
+    "rsi_oversold",
+    "rsi_overbought",
+    "rsi_neutral",
+    "rsi_extreme",
+    "macd",
+    "macd_bullish",
+    "macd_strength",
+    "price_position",
+    "volatility",
+    "high_volatility",
+    "low_volatility",
+    "volume_ratio",
+    "high_volume",
+    "low_volume",
+    "volume_surge",
+    "atr_ratio",
+    "high_atr",
+    "price_trend_5",
+    "price_trend_10",
+    "consecutive_up",
+    "consecutive_down",
+    "volume_trend",
+    "momentum_3",
+    "momentum_5",
+    "morning",
+    "afternoon",
+    "near_close",
+    "market_open",
+    "bullish_strength",
+    "bearish_strength",
+    "signal_divergence",
+    "risk_level",
+    "trend_strength"
+  ],
+  "model_performance": {
+    "rf": 0.5,
+    "gb": 0.45,
+    "lr": 0.45
+  },
+  "is_trained": true,
+  "config_snapshot": {
+    "ensemble_weights": {
+      "rf": 0.4,
+      "gb": 0.4,
+      "lr": 0.2
+    },
+    "price_change_threshold": 0.015,
+    "min_confidence": 0.6
+  }
+}

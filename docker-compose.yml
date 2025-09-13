@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  ai-trading-platform:
+    build: .
+    container_name: ai-trading-platform
+    ports:
+      - "5000:5000"  # Python AI服务端口
+      - "8080:8080"  # Java平台端口（如果需要）
+    volumes:
+      - ./logs:/app/logs
+      - ./strategy/models:/app/strategy/models
+      - ./strategy/logs:/app/strategy/logs
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5000
+      - LOG_LEVEL=INFO
+      - MIN_CONFIDENCE=0.6
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Redis缓存（可选，用于数据缓存）
+  redis:
+    image: redis:7-alpine
+    container_name: ai-trading-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # PostgreSQL数据库（可选，用于数据持久化）
+  postgres:
+    image: postgres:15-alpine
+    container_name: ai-trading-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=trading_db
+      - POSTGRES_USER=trading_user
+      - POSTGRES_PASSWORD=trading_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  default:
+    name: ai-trading-network

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 AI量化交易平台 - by Alvin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <i class="fas fa-rocket logo-icon"></i>
+                    <div class="logo-text">
+                        <h1>AI量化交易平台</h1>
+                        <p class="subtitle">by Alvin - 专业级AI驱动的量化交易系统</p>
+                    </div>
+                </div>
+                <div class="header-status">
+                    <div class="status-indicator" id="systemStatus">
+                        <i class="fas fa-circle"></i>
+                        <span>连接中...</span>
+                    </div>
+                    <div class="time-display" id="currentTime"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-button active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>仪表板</span>
+            </button>
+            <button class="tab-button" data-tab="portfolio">
+                <i class="fas fa-chart-pie"></i>
+                <span>投资组合</span>
+            </button>
+            <button class="tab-button" data-tab="backtest">
+                <i class="fas fa-chart-line"></i>
+                <span>回测分析</span>
+            </button>
+            <button class="tab-button" data-tab="signals">
+                <i class="fas fa-signal"></i>
+                <span>交易信号</span>
+            </button>
+            <button class="tab-button" data-tab="models">
+                <i class="fas fa-brain"></i>
+                <span>AI模型</span>
+            </button>
+            <button class="tab-button" data-tab="stocks">
+                <i class="fas fa-chart-bar"></i>
+                <span>股票配置</span>
+            </button>
+            <button class="tab-button" data-tab="settings">
+                <i class="fas fa-cog"></i>
+                <span>设置</span>
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- System Health Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-heartbeat"></i> 系统健康</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-icon" onclick="refreshHealth()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body" id="healthStatus">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Data Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-area"></i> 实时数据</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-icon" onclick="refreshRealTimeData()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body" id="realTimeData">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Latest Signals Card -->
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bell"></i> 最新交易信号</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-icon" onclick="refreshSignals()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body" id="latestSignals">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Tab -->
+            <div id="portfolio" class="tab-content">
+                <div class="portfolio-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-wallet"></i> 投资组合概览</h3>
+                        </div>
+                        <div class="card-body" id="portfolioOverview">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-pie"></i> 资产分布</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="portfolioChart" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> 持仓详情</h3>
+                        </div>
+                        <div class="card-body" id="positionsDetail">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backtest Tab -->
+            <div id="backtest" class="tab-content">
+                <div class="backtest-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> 回测控制</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="backtest-controls">
+                                <button class="btn btn-primary btn-large" id="runBacktestBtn" onclick="runBacktest()">
+                                    <i class="fas fa-play"></i>
+                                    <span>运行3年历史回测</span>
+                                </button>
+                                <button class="btn btn-secondary" id="quickBacktestBtn" onclick="runQuickBacktest()">
+                                    <i class="fas fa-bolt"></i>
+                                    <span>快速回测</span>
+                                </button>
+                            </div>
+                            <div class="backtest-info">
+                                <p><i class="fas fa-info-circle"></i> 回测将分析过去3年的历史数据，评估AI策略的表现</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar"></i> 回测结果</h3>
+                        </div>
+                        <div class="card-body" id="backtestResults">
+                            <div class="empty-state">
+                                <i class="fas fa-chart-line fa-3x"></i>
+                                <h4>准备开始回测分析</h4>
+                                <p>点击"运行3年历史回测"开始分析AI策略的历史表现</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signals Tab -->
+            <div id="signals" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-signal"></i> 交易信号历史</h3>
+                        <div class="card-actions">
+                            <select id="signalFilter" class="select-input">
+                                <option value="all">所有信号</option>
+                                <option value="BUY">买入信号</option>
+                                <option value="SELL">卖出信号</option>
+                                <option value="HOLD">持有信号</option>
+                            </select>
+                            <button class="btn btn-icon" onclick="refreshSignals()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" id="signalsHistory">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>加载中...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Models Tab -->
+            <div id="models" class="tab-content">
+                <div class="models-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-brain"></i> AI模型状态</h3>
+                        </div>
+                        <div class="card-body" id="modelStatus">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar"></i> 特征重要性</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="featureChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cogs"></i> 模型管理</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="model-actions">
+                                <button class="btn btn-primary" onclick="trainModels()">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>训练模型</span>
+                                </button>
+                                <button class="btn btn-warning" onclick="retrainModels()">
+                                    <i class="fas fa-redo"></i>
+                                    <span>重新训练</span>
+                                </button>
+                                <button class="btn btn-info" onclick="exportModels()">
+                                    <i class="fas fa-download"></i>
+                                    <span>导出模型</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Configuration Tab -->
+            <div id="stocks" class="tab-content">
+                <div class="stocks-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-plus-circle"></i> 添加股票</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="add-stock-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="stockSymbol">股票代码</label>
+                                        <input type="text" id="stockSymbol" placeholder="例如: AAPL, TSLA, QQQ" style="text-transform: uppercase;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stockName">股票名称</label>
+                                        <input type="text" id="stockName" placeholder="例如: 苹果公司">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="stockType">类型</label>
+                                        <select id="stockType">
+                                            <option value="stock">股票</option>
+                                            <option value="etf">ETF</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stockSector">行业</label>
+                                        <input type="text" id="stockSector" placeholder="例如: Technology">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="stockWeight">投资权重 (%)</label>
+                                        <input type="number" id="stockWeight" min="1" max="20" value="5" step="0.5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stockPriority">优先级</label>
+                                        <select id="stockPriority">
+                                            <option value="high">高</option>
+                                            <option value="medium" selected>中</option>
+                                            <option value="low">低</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stockMinConfidence">最低置信度</label>
+                                    <input type="range" id="stockMinConfidence" min="0.5" max="0.9" step="0.05" value="0.7">
+                                    <span class="range-value" id="stockMinConfidenceValue">70%</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="stockNotes">备注</label>
+                                    <textarea id="stockNotes" placeholder="添加股票相关备注..."></textarea>
+                                </div>
+                                <button class="btn btn-primary" onclick="addStock()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>添加到监控列表</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> 当前监控股票</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-icon" onclick="refreshStockList()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="btn btn-secondary" onclick="exportStockConfig()">
+                                    <i class="fas fa-download"></i>
+                                    <span>导出配置</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body" id="stocksList">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> 实时行情</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-icon" onclick="refreshQuotes()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body" id="stockQuotes">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>加载实时行情...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-sliders-h"></i> 交易参数</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-form">
+                                <div class="form-group">
+                                    <label for="dataInterval">数据收集间隔 (秒)</label>
+                                    <input type="number" id="dataInterval" value="60" min="30" max="300">
+                                </div>
+                                <div class="form-group">
+                                    <label for="strategyInterval">策略执行间隔 (秒)</label>
+                                    <input type="number" id="strategyInterval" value="300" min="60" max="1800">
+                                </div>
+                                <div class="form-group">
+                                    <label for="minConfidence">最小置信度</label>
+                                    <input type="range" id="minConfidence" min="0.5" max="0.95" step="0.05" value="0.6">
+                                    <span class="range-value" id="minConfidenceValue">60%</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="riskLevel">风险等级</label>
+                                    <select id="riskLevel">
+                                        <option value="conservative">保守型</option>
+                                        <option value="moderate" selected>稳健型</option>
+                                        <option value="aggressive">积极型</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bell"></i> 通知设置</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-form">
+                                <div class="form-group">
+                                    <label for="notificationEmail">通知邮箱</label>
+                                    <input type="email" id="notificationEmail" value="wangjians8813@gmail.com">
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        <span class="checkmark"></span>
+                                        邮件通知
+                                    </label>
+                                </div>
+                                <div class="form-group checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="wechatNotifications" checked>
+                                        <span class="checkmark"></span>
+                                        微信通知
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="wechatWebhook">微信机器人Webhook</label>
+                                    <input type="url" id="wechatWebhook" placeholder="https://qyapi.weixin.qq.com/...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3><i class="fas fa-save"></i> 配置管理</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="config-actions">
+                                <button class="btn btn-primary" onclick="saveSettings()">
+                                    <i class="fas fa-save"></i>
+                                    <span>保存设置</span>
+                                </button>
+                                <button class="btn btn-secondary" onclick="resetSettings()">
+                                    <i class="fas fa-undo"></i>
+                                    <span>重置默认</span>
+                                </button>
+                                <button class="btn btn-info" onclick="exportConfig()">
+                                    <i class="fas fa-file-export"></i>
+                                    <span>导出配置</span>
+                                </button>
+                                <button class="btn btn-warning" onclick="importConfig()">
+                                    <i class="fas fa-file-import"></i>
+                                    <span>导入配置</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 AI量化交易平台 by Alvin | 专业级量化交易解决方案</p>
+                <div class="footer-links">
+                    <a href="#" onclick="showAbout()">关于</a>
+                    <a href="#" onclick="showHelp()">帮助</a>
+                    <a href="#" onclick="showContact()">联系</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">标题</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                内容
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,4 +1,6 @@
-package com.alvin.quantitative.trading.platform;
+package com.alvin.quantitative.trading.platform.risk;
+
+import com.alvin.quantitative.trading.platform.core.Position;
 
 import java.util.HashMap;
 import java.util.Map;
