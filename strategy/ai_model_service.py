@@ -269,9 +269,9 @@ class AIModelService:
                 'confidence': float(confidence),
                 'reason': reason,
                 'metadata': {
-                    'model_predictions': predictions,
-                    'ensemble_probabilities': ensemble_prob.tolist(),
-                    'key_features': self.get_key_features(features),
+                    'model_predictions': {k: int(v) for k, v in predictions.items()},
+                    'ensemble_probabilities': [float(x) for x in ensemble_prob.tolist()],
+                    'key_features': {k: float(v) for k, v in self.get_key_features(features).items()},
                     'market_regime': self.detect_market_regime(features)
                 }
             }
