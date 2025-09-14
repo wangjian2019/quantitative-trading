@@ -196,25 +196,48 @@ public class ApplicationConfig {
     public boolean validateConfiguration() {
         boolean isValid = true;
         
+        // 生产环境关键配置验证
         if (getAiServiceUrl() == null || getAiServiceUrl().trim().isEmpty()) {
-            logger.severe("AI service URL is not configured");
+            logger.severe("🚨 PRODUCTION ERROR: AI service URL is not configured");
             isValid = false;
         }
         
         if (getInitialCapital() <= 0) {
-            logger.severe("Initial capital must be positive");
+            logger.severe("🚨 PRODUCTION ERROR: Initial capital must be positive");
             isValid = false;
         }
         
         if (getMaxPositionRatio() <= 0 || getMaxPositionRatio() > 1) {
-            logger.severe("Max position ratio must be between 0 and 1");
+            logger.severe("🚨 PRODUCTION ERROR: Max position ratio must be between 0 and 1");
             isValid = false;
         }
         
+        // 新增：生产环境安全检查
+        if (getInitialCapital() > 1000000 && getMaxDailyLoss() < getInitialCapital() * 0.02) {
+            logger.warning("⚠️ PRODUCTION WARNING: For large capital, daily loss limit seems too low");
+        }
+        
+        if (getStopLossRatio() < 0.02 || getStopLossRatio() > 0.1) {
+            logger.warning("⚠️ PRODUCTION WARNING: Stop loss ratio should be between 2%-10%");
+        }
+        
+        if (getTradingSymbols().isEmpty()) {
+            logger.severe("🚨 PRODUCTION ERROR: No trading symbols configured");
+            isValid = false;
+        }
+        
+        // 验证AI服务连接
+        try {
+            // 这里可以添加AI服务连接测试
+            logger.info("AI service URL configured: " + getAiServiceUrl());
+        } catch (Exception e) {
+            logger.warning("⚠️ PRODUCTION WARNING: Cannot verify AI service connection: " + e.getMessage());
+        }
+        
         if (isValid) {
-            logger.info("Configuration validation passed");
+            logger.info("✅ Production configuration validation passed");
         } else {
-            logger.severe("Configuration validation failed");
+            logger.severe("❌ Production configuration validation failed - SYSTEM WILL NOT START");
         }
         
         return isValid;

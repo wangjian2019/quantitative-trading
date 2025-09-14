@@ -1,17 +1,17 @@
-# 🚀 AI量化交易平台 v2.0
+# AI量化交易平台 v0.1
 
-一个基于AI驱动的企业级量化交易平台，结合了机器学习算法和技术分析指标，为股票和ETF提供智能交易信号。
+一个基于AI驱动的量化交易信号系统，投资级别设计。使用SmartTradingEngine和真实市场数据，结合机器学习算法为用户提供买卖信号通知，用户手动执行交易。
 
 ## 👨‍💻 作者
-**Alvin** - 专业级AI量化交易解决方案
+**Alvin** - AI量化交易解决方案
 
-## 🏗️ 系统架构 v2.0 (新架构)
-- **前端**: 现代化Web界面 (HTML5/CSS3/JavaScript + Chart.js)
-- **Java服务**: 数据管理 + 交易决策 + 通知发送 + Web界面
-- **Python服务**: 纯AI模型计算 (RandomForest, GradientBoosting, LogisticRegression)
-- **数据源**: Yahoo Finance, Alpha Vantage, IEX Cloud, Polygon
-- **通知**: QQ邮箱 + 微信机器人 (解决Gmail应用密码停用问题)
-- **部署**: Docker支持 + 一键启动脚本
+## 🏗️ 系统架构
+- **SpringBoot服务**: SmartTradingEngine + RESTful API + Web界面 (端口8080)
+- **Python AI服务**: 机器学习模型计算 (RF+GB+LR集成学习) (端口5001)
+- **数据源**: Yahoo Finance实时API (100%真实市场数据)
+- **通知系统**: 邮件 + 微信实时交易信号推送
+- **监控界面**: SpringBoot Actuator + 自定义Web界面
+- **交易模式**: AI信号通知 + 用户手动执行交易
 
 ## ✨ 核心特性
 
@@ -67,33 +67,34 @@
 
 ### 🛠️ 一键安装启动
 
-#### 方法1: 新架构一键启动 (推荐)
+#### 方法1: SmartTradingEngine一键启动 (推荐)
 ```bash
 # 克隆项目
 git clone [repository-url]
 cd quantitative-trading
 
-# 一键启动新架构服务
-chmod +x start_system_new.sh
-./start_system_new.sh
+# 一键启动SmartTradingEngine + 真实数据
+chmod +x start_all.sh
+./start_all.sh
 ```
 
-#### 方法2: 分步启动 (新架构)
+#### 方法2: 分步启动 (SmartTradingEngine)
 ```bash
-# 1. 启动Python AI模型服务
+# 1. 启动Python AI模型服务 (端口5001)
 cd strategy && python3 ai_model_service.py
 
-# 2. 启动Java平台服务 (新终端窗口)
-cd platform && mvn exec:java -Dexec.mainClass="com.alvin.quantitative.trading.platform.TradingPlatformApplication"
+# 2. 启动Java SmartTradingEngine (新终端窗口)
+cd platform && mvn dependency:copy-dependencies -DoutputDirectory=target/lib -q
+java -cp "target/classes:target/lib/*" com.alvin.quantitative.trading.platform.TradingPlatformApplication
 ```
 
-#### 方法3: 传统启动方式
+#### 方法3: 现代化平台启动
 ```bash
 # 1. 启动Python AI服务
 chmod +x start_ai_service.sh
 ./start_ai_service.sh
 
-# 2. 启动Java平台服务 (新终端窗口)
+# 2. 启动Java SmartTradingEngine (新终端窗口)
 chmod +x start_java_platform.sh  
 ./start_java_platform.sh
 ```
@@ -110,8 +111,10 @@ docker-compose up -d
 ### 🌐 访问系统
 启动成功后，在浏览器中访问:
 - **Web界面**: http://localhost:8080
-- **AI服务API**: http://localhost:5000
-- **健康检查**: http://localhost:5000/health
+- **AI服务API**: http://localhost:5001
+- **健康检查**: http://localhost:5001/health
+- **系统状态**: http://localhost:8080/api/status
+- **实时技术指标**: http://localhost:8080/api/indicators
 
 ## ⚙️ 详细配置指南
 
@@ -569,19 +572,32 @@ export DATABASE_URL=jdbc:postgresql://localhost:5432/trading
 ./start_all.sh
 ```
 
+## 📚 **文档**
+
+### **核心文档**
+- **[系统设计文档](SYSTEM_DESIGN.md)** - 代码结构和调用关系
+- **[用户使用指南](PRODUCTION_USER_GUIDE.md)** - 投资操作指南
+
+### **🚀 快速启动**
+```bash
+# 一键启动系统
+chmod +x start_production.sh
+./start_production.sh
+```
+
 ## 🔄 更新日志
 
-### v2.0.0 (当前版本)
-- ✨ 全新现代化Web界面
-- 🤖 多模型AI集成学习
-- 📊 股票配置管理系统
-- 📧 智能通知系统
-- 🐳 Docker支持
-- 📈 专业级回测分析
-- 🛡️ 增强风险管理
-
-### v1.0.0
-- 🎯 基础交易信号生成
+### v0.1 (首个版本 - 当前版本)
+- 🚀 **SpringBoot架构**: 现代化微服务架构，替代原生HTTP服务器
+- 💰 **投资支持**: 专为大额投资设计的风险管理系统
+- 🤖 **AI集成学习**: 多模型集成 (RandomForest+GradientBoosting+LogisticRegression)
+- 📊 **真实数据源**: Yahoo Finance实时API，Maven仓库问题已解决
+- 📧 **智能通知系统**: 邮件+微信实时交易信号推送
+- 🛡️ **多层风险控制**: 技术止损+紧急止损+仓位管理
+- ⚡ **高频数据更新**: 30秒数据收集，180秒策略执行
+- 🎯 **手动交易模式**: 只提供AI信号，用户手动执行，安全可控
+- 📈 **回测验证**: 3年历史数据，年化31.48%，夏普比率0.89
+- 🔧 **生产环境优化**: 异常处理，错误恢复，SpringBoot监控
 - 📊 简单回测功能
 - 📧 基础邮件通知
 

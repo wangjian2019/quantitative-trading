@@ -1,7 +1,6 @@
 package com.alvin.quantitative.trading.platform.data;
 
 import com.alvin.quantitative.trading.platform.config.ApplicationConfig;
-import com.alvin.quantitative.trading.platform.data.impl.SimulationDataSource;
 import com.alvin.quantitative.trading.platform.data.impl.YahooFinanceDataSource;
 
 import java.util.logging.Logger;
@@ -15,8 +14,7 @@ public class DataSourceFactory {
     private static final Logger logger = Logger.getLogger(DataSourceFactory.class.getName());
     
     public enum DataSourceType {
-        YAHOO_FINANCE,
-        SIMULATION
+        YAHOO_FINANCE
     }
     
     private DataSourceFactory() {
@@ -38,9 +36,8 @@ public class DataSourceFactory {
         
         // Test data source availability
         if (!dataSource.isAvailable()) {
-            logger.warning("Primary data source not available, falling back to simulation");
-            dataSource.cleanup();
-            dataSource = createSimulationDataSource();
+            logger.severe("Yahoo Finance data source not available - no fallback configured");
+            throw new DataSourceException("Yahoo Finance data source unavailable and no fallback configured");
         }
         
         logger.info("Data source initialized: " + dataSource.getSourceName() + 
@@ -54,11 +51,8 @@ public class DataSourceFactory {
         
         switch (type) {
             case YAHOO_FINANCE:
-                return createYahooFinanceDataSource(config);
-                
-            case SIMULATION:
             default:
-                return createSimulationDataSource();
+                return createYahooFinanceDataSource(config);
         }
     }
     
@@ -77,14 +71,4 @@ public class DataSourceFactory {
         return dataSource;
     }
     
-    public static DataSource createSimulationDataSource() {
-        try {
-            DataSource dataSource = new SimulationDataSource();
-            dataSource.initialize(new DataSourceConfig());
-            return dataSource;
-        } catch (DataSourceException e) {
-            // This should never happen for simulation data source
-            throw new RuntimeException("Failed to create simulation data source", e);
-        }
-    }
 }

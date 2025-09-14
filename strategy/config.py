@@ -27,15 +27,15 @@ class Config:
                 'threaded': True
             },
             
-            # 模型配置
+            # 模型配置 - 优化为高准确率
             'model': {
                 'save_path': 'models',
                 'auto_save': True,
-                'min_training_data': 100,
-                'feature_importance_threshold': 0.01,
+                'min_training_data': 500,  # 增加最小训练数据量
+                'feature_importance_threshold': 0.005,
                 'ensemble_weights': {
-                    'rf': 0.4,
-                    'gb': 0.4,
+                    'rf': 0.3,    # 调整权重
+                    'gb': 0.5,    # 增加GradientBoosting权重
                     'lr': 0.2
                 }
             },
@@ -48,15 +48,15 @@ class Config:
                 'volume_ratio_window': 20
             },
             
-            # 交易信号配置
+            # 交易信号配置 - 优化为高收益
             'trading': {
-                'min_confidence': 0.6,
-                'high_confidence': 0.8,
-                'price_change_threshold': 0.015,  # 1.5%
-                'rsi_oversold': 30,
-                'rsi_overbought': 70,
-                'rsi_extreme_low': 20,
-                'rsi_extreme_high': 80
+                'min_confidence': 0.65,  # 提高最小置信度
+                'high_confidence': 0.85, # 提高高置信度阈值
+                'price_change_threshold': 0.025,  # 提高到2.5%，寻找更大的价格变动
+                'rsi_oversold': 25,      # 更严格的超卖条件
+                'rsi_overbought': 75,    # 更严格的超买条件
+                'rsi_extreme_low': 15,   # 极端超卖
+                'rsi_extreme_high': 85   # 极端超买
             },
             
             # 回测配置

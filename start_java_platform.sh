@@ -31,9 +31,9 @@ fi
 echo "编译成功！"
 echo ""
 echo "启动Java交易平台..."
-echo "确保Python AI服务已在 http://localhost:5000 运行"
+echo "确保Python AI服务已在 http://localhost:5001 运行"
 echo ""
 
-# 运行Java主程序（新架构）
-mvn exec:java -Dexec.mainClass="com.alvin.quantitative.trading.platform.TradingPlatformApplication" -q
+# 使用SpringBoot方式启动 (带项目级settings.xml)
+mvn spring-boot:run -s settings.xml
 
