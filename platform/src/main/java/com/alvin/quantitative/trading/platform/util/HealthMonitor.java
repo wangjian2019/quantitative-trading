@@ -134,9 +134,14 @@ public class HealthMonitor {
         
         // Overall status
         report.put("system_healthy", isSystemHealthy());
-        report.put("last_health_check", LocalDateTime.ofEpochSecond(
-            lastHealthCheck.get() / 1000, 0, java.time.ZoneOffset.UTC)
-            .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        try {
+            report.put("last_health_check", LocalDateTime.ofEpochSecond(
+                lastHealthCheck.get() / 1000, 0, java.time.ZoneOffset.UTC)
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        } catch (Exception e) {
+            report.put("last_health_check", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            logger.warning("Health check timestamp conversion error: " + e.getMessage());
+        }
         
         // Component status
         Map<String, Boolean> components = new HashMap<>();

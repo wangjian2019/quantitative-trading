@@ -1,0 +1,51 @@
+# SpringBoot配置文件
+# 编码: UTF-8
+# 版本: v0.1
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: ai-quantitative-trading-platform
+  profiles:
+    active: production
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/web/
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+# 日志配置
+logging:
+  level:
+    com.alvin.quantitative.trading: INFO
+    org.springframework: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/springboot-trading.log
+    max-size: 10MB
+    max-history: 5

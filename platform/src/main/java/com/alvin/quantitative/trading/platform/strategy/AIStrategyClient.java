@@ -5,6 +5,7 @@ import com.alvin.quantitative.trading.platform.core.AISignal;
 import com.alvin.quantitative.trading.platform.core.KlineData;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.logging.Logger;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -26,6 +27,8 @@ import java.util.Map;
  * Communicates with Python AI service for strategy signals
  */
 public class AIStrategyClient {
+    private static final Logger logger = Logger.getLogger(AIStrategyClient.class.getName());
+    
     private final CloseableHttpClient httpClient;
     private final String apiUrl;
     private final ObjectMapper objectMapper;
@@ -116,7 +119,61 @@ public class AIStrategyClient {
         AISignal signal = new AISignal();
         signal.setAction("HOLD");
         signal.setConfidence(0.0);
-        signal.setReason("Fallback strategy: " + reason);
+        signal.setReason("AI服务故障，使用保守策略: " + reason);
+        
+        // 生产环境关键：记录错误并发送警报
+        logger.severe("🚨 PRODUCTION ALERT: AI service failure - " + reason);
+        
         return signal;
+    }
+    
+    /**
+     * 生产环境增强的回退策略
+     */
+    private AISignal createEnhancedFallbackSignal(String symbol, KlineData currentData, 
+                                                 Map<String, Double> indicators, String errorMessage) {
+        try {
+            // 基于技术指标的智能回退策略
+            double rsi = indicators.getOrDefault("RSI", 50.0);
+            double macd = indicators.getOrDefault("MACD", 0.0);
+            double ma5 = indicators.getOrDefault("MA5", currentData.getClose());
+            double ma20 = indicators.getOrDefault("MA20", currentData.getClose());
+            double volumeRatio = indicators.getOrDefault("VOLUME_RATIO", 1.0);
+            double currentPrice = currentData.getClose();
+            
+            AISignal signal = new AISignal();
+            
+            // 强买入条件
+            if (rsi < 20 && macd > 0 && currentPrice > ma5 && volumeRatio > 2.0) {
+                signal.setAction("BUY");
+                signal.setConfidence(0.75);
+                signal.setReason("🚨 AI故障回退策略: RSI极度超卖(" + String.format("%.1f", rsi) + ") + MACD金叉 + 放量突破");
+            }
+            // 强卖出条件
+            else if (rsi > 80 && macd < 0 && currentPrice < ma20 && volumeRatio > 2.0) {
+                signal.setAction("SELL");
+                signal.setConfidence(0.75);
+                signal.setReason("🚨 AI故障回退策略: RSI极度超买(" + String.format("%.1f", rsi) + ") + MACD死叉 + 放量下跌");
+            }
+            // 保守持有
+            else {
+                signal.setAction("HOLD");
+                signal.setConfidence(0.5);
+                signal.setReason("🚨 AI故障回退策略: 技术指标无明确信号，保守持有");
+            }
+            
+            logger.warning("Using enhanced fallback strategy for " + symbol + ": " + signal.getAction() + 
+                          " (confidence: " + signal.getConfidence() + ")");
+            
+            return signal;
+            
+        } catch (Exception e) {
+            logger.severe("Even fallback strategy failed: " + e.getMessage());
+            AISignal emergencySignal = new AISignal();
+            emergencySignal.setAction("HOLD");
+            emergencySignal.setConfidence(0.0);
+            emergencySignal.setReason("🚨 紧急模式: 所有策略失败，强制持有");
+            return emergencySignal;
+        }
     }
 }

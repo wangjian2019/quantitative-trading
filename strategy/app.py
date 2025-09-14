@@ -67,7 +67,7 @@ def health_check():
         'service': 'AI Trading Strategy Service',
         'author': 'Alvin',
         'timestamp': datetime.now().isoformat(),
-        'version': '2.0.0'
+        'version': '0.1'
     })
 
 @app.route('/info', methods=['GET'])
@@ -75,10 +75,10 @@ def service_info():
     """Service information endpoint"""
     return jsonify({
         'name': 'AI Trading Strategy Service',
-        'version': '2.0.0',
+        'version': '0.1',
         'author': 'Alvin',
-        'description': 'Advanced AI-powered trading strategy service with ensemble learning',
-        'architecture': 'Modular microservice with design patterns',
+        'description': 'AI量化交易信号生成服务，集成学习模型',
+        'architecture': '模块化微服务架构',
         'features': [
             'Multi-model ensemble learning',
             'Advanced feature engineering',
@@ -127,9 +127,9 @@ def initialize_application():
 
 if __name__ == '__main__':
     print("="*60)
-    print("🚀 AI Trading Strategy Service v2.0")
-    print("Author: Alvin")
-    print("Architecture: Modular microservice with design patterns")
+    print("🚀 AI Trading Strategy Service v0.1")
+    print("作者: Alvin")
+    print("架构: 模块化AI信号生成服务")
     print("="*60)
     
     # Initialize application
