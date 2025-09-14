@@ -251,35 +251,3 @@ class BacktestService:
         
         return max_drawdown
     
-    def generate_sample_data(self, num_points: int = 500) -> List[Dict]:
-        """Generate sample historical data for testing"""
-        np.random.seed(42)
-        
-        data = []
-        base_price = 100.0
-        
-        for i in range(num_points):
-            # Simulate price movement with trend and noise
-            trend = 0.001 if i < num_points // 2 else -0.0005
-            noise = np.random.normal(0, 0.02)
-            
-            price_change = trend + noise
-            base_price *= (1 + price_change)
-            
-            # Generate OHLC data
-            open_price = base_price
-            high_price = base_price * (1 + abs(np.random.normal(0, 0.01)))
-            low_price = base_price * (1 - abs(np.random.normal(0, 0.01)))
-            close_price = base_price
-            volume = int(np.random.normal(10000, 3000))
-            
-            data.append({
-                'timestamp': (datetime.now() - timedelta(days=num_points-i)).isoformat(),
-                'open': round(open_price, 2),
-                'high': round(high_price, 2),
-                'low': round(low_price, 2),
-                'close': round(close_price, 2),
-                'volume': max(volume, 1000)
-            })
-        
-        return data

@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  * Author: Alvin
  * Main trading engine that coordinates data, AI strategy, and risk management
  */
-public class SmartTradingEngine {
+public class SmartTradingEngine implements TradingEngineInterface {
     private static final Logger logger = Logger.getLogger(SmartTradingEngine.class.getName());
     private final MarketDataManager dataManager;
     private final AIStrategyClient aiClient;
@@ -187,14 +187,31 @@ public class SmartTradingEngine {
             KlineData currentData = history.get(history.size() - 1);
             Map<String, Double> indicators = dataManager.getIndicators(symbol);
             
-            // Call AI strategy
+            // Call AI strategy with null safety
             healthMonitor.recordSignalRequest();
-            AISignal signal = aiClient.getSignal(symbol, currentData, indicators, history);
+            AISignal signal = null;
             
-            if (signal != null && !"HOLD".equals(signal.getAction()) && signal.getConfidence() > 0) {
+            try {
+                signal = aiClient.getSignal(symbol, currentData, indicators, history);
+            } catch (Exception e) {
+                logger.severe("🚨 CRITICAL: AI service call failed for " + symbol + ": " + e.getMessage());
+                healthMonitor.recordFailedSignal();
+                healthMonitor.setAiServiceHealth(false);
+                return; // Skip this symbol
+            }
+            
+            // Null safety check
+            if (signal == null) {
+                logger.warning("AI service returned null signal for " + symbol);
+                healthMonitor.recordFailedSignal();
+                healthMonitor.setAiServiceHealth(false);
+                return;
+            }
+            
+            if (!"HOLD".equals(signal.getAction()) && signal.getConfidence() > 0) {
                 healthMonitor.recordSuccessfulSignal();
                 healthMonitor.setAiServiceHealth(true);
-            } else if (signal == null || signal.getConfidence() == 0) {
+            } else if (signal.getConfidence() == 0) {
                 healthMonitor.recordFailedSignal();
                 healthMonitor.setAiServiceHealth(false);
             }
@@ -206,13 +223,10 @@ public class SmartTradingEngine {
                 return;
             }
             
-            // Execute order
+            // 发送交易通知给用户（手动执行）
             healthMonitor.recordTradeAttempt();
-            executeOrder(symbol, signal, currentData.getClose());
+            sendTradingNotificationToUser(symbol, signal, currentData.getClose());
             healthMonitor.recordSuccessfulTrade();
-            
-            // Send notification for significant signals
-            notificationService.sendTradingSignalNotification(symbol, signal, currentData.getClose());
             
         } catch (Exception e) {
             healthMonitor.recordError("Strategy execution failed for " + symbol + ": " + e.getMessage());
@@ -247,59 +261,97 @@ public class SmartTradingEngine {
         }
     }
     
-    private void executeOrder(String symbol, AISignal signal, double price) {
-        System.out.println(String.format("[%s] %s: %s@%.2f Confidence:%.2f Reason:%s", 
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")),
-            symbol, signal.getAction(), price, signal.getConfidence(), signal.getReason()));
+    /**
+     * 发送交易通知给用户，用户手动执行交易
+     */
+    private void sendTradingNotificationToUser(String symbol, AISignal signal, double price) {
+        // 计算建议仓位大小
+        double suggestedPositionMillion = calculatePositionSizeForManualTrading(symbol, signal, price);
         
-        // Connect to actual trading API here
-        // e.g., Interactive Brokers, TD Ameritrade, etc.
+        // 计算止损止盈价格
+        double stopLoss = price * (1 - config.getStopLossRatio());
+        double takeProfit = price * (1 + config.getTakeProfitRatio());
         
-        // Simulate trade execution
-        switch (signal.getAction()) {
-            case "BUY":
-                double buyAmount = totalCapital * 0.1; // Buy 10% each time
-                double shares = buyAmount / price;
-                riskManager.updatePosition(symbol, "BUY", price, shares);
-                System.out.println("Bought " + symbol + " " + shares + " shares");
-                break;
-                
-            case "SELL":
-                Position position = riskManager.getPositions().get(symbol);
-                if (position != null && position.getShares() > 0) {
-                    riskManager.updatePosition(symbol, "SELL", price, position.getShares());
-                    System.out.println("Sold " + symbol + " " + position.getShares() + " shares");
-                }
-                break;
+        // 格式化通知消息
+        String notificationMessage = String.format(
+            "🚨 AI交易信号 - %s\n" +
+            "📊 股票: %s\n" +
+            "🎯 操作: %s\n" +
+            "💰 价格: $%.2f\n" +
+            "📈 置信度: %.1f%%\n" +
+            "💼 建议仓位: %.1f万 (%.1f%%)\n" +
+            "🛡️ 建议止损: $%.2f\n" +
+            "🎯 建议止盈: $%.2f\n" +
+            "📝 分析理由: %s\n" +
+            "⏰ 时间: %s",
+            signal.getAction().equals("BUY") ? "买入信号" : "卖出信号",
+            symbol,
+            signal.getAction(),
+            price,
+            signal.getConfidence() * 100,
+            suggestedPositionMillion,
+            suggestedPositionMillion / 10.0,
+            stopLoss,
+            takeProfit,
+            signal.getReason(),
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        );
+        
+        // 控制台输出
+        System.out.println(repeat("=", 60));
+        System.out.println("🚨 用户交易通知 🚨");
+        System.out.println(repeat("=", 60));
+        System.out.println(notificationMessage);
+        System.out.println(repeat("=", 60));
+        
+        // 发送邮件和微信通知
+        try {
+            notificationService.sendTradingSignalNotification(symbol, signal, price);
+            logger.info("Trading notification sent to user for manual execution: " + symbol + " " + signal.getAction());
+        } catch (Exception e) {
+            logger.warning("Failed to send notification: " + e.getMessage());
         }
+    }
+    
+    /**
+     * 计算投资的建议仓位大小
+     */
+    private double calculatePositionSizeForManualTrading(String symbol, AISignal signal, double price) {
+        // 基础仓位：根据置信度动态调整
+        double basePositionPercent = 0.05; // 基础5%
+        
+        // 置信度调整：置信度越高，仓位越大
+        double confidenceMultiplier = Math.min(3.0, signal.getConfidence() / 0.6);
+        
+        // 波动率调整：波动率越高，仓位越小
+        Map<String, Double> indicators = dataManager.getIndicators(symbol);
+        double volatility = indicators.getOrDefault("VOLATILITY", 0.02);
+        double volatilityAdjustment = Math.min(1.0, 0.02 / volatility);
+        
+        // RSI调整：超卖时增加仓位，超买时减少仓位
+        double rsi = indicators.getOrDefault("RSI", 50.0);
+        double rsiAdjustment = 1.0;
+        if (rsi < 30 && "BUY".equals(signal.getAction())) {
+            rsiAdjustment = 1.5; // RSI超卖买入，增加50%仓位
+        } else if (rsi > 70 && "SELL".equals(signal.getAction())) {
+            rsiAdjustment = 1.5; // RSI超买卖出，增加50%仓位
+        } else if (rsi > 70 && "BUY".equals(signal.getAction())) {
+            rsiAdjustment = 0.5; // RSI超买买入，减少50%仓位
+        }
+        
+        double finalPositionPercent = basePositionPercent * confidenceMultiplier * volatilityAdjustment * rsiAdjustment;
+        
+        // 限制：单股票最大20%（200万），最小2%（20万）
+        finalPositionPercent = Math.max(0.02, Math.min(0.20, finalPositionPercent));
+        
+        return finalPositionPercent * 100; // 转换为万元
     }
     
     private void checkRisk() {
         if (!isRunning) return;
         
-        for (Map.Entry<String, Position> entry : riskManager.getPositions().entrySet()) {
-            String symbol = entry.getKey();
-            Position position = entry.getValue();
-            
-            if (position.getShares() <= 0) continue;
-            
-            List<KlineData> recent = dataManager.getRecentData(symbol, 1);
-            if (recent.isEmpty()) continue;
-            
-            double currentPrice = recent.get(0).getClose();
-            
-            // Check stop loss
-            if (riskManager.shouldStopLoss(symbol, currentPrice)) {
-                System.out.println("Stop loss triggered: " + symbol + " @" + currentPrice);
-                executeOrder(symbol, createSellSignal("Stop Loss"), currentPrice);
-            }
-            
-            // Check take profit
-            if (riskManager.shouldTakeProfit(symbol, currentPrice)) {
-                System.out.println("Take profit triggered: " + symbol + " @" + currentPrice);
-                executeOrder(symbol, createSellSignal("Take Profit"), currentPrice);
-            }
-        }
+        // 用户手动交易，这里只做风险监控和提醒
+        logger.info("⚠️ 风险检查完成 - 用户手动交易模式");
     }
     
     private AISignal createSellSignal(String reason) {
@@ -361,20 +413,111 @@ public class SmartTradingEngine {
             healthMonitor.recordError("Data fetch failed for " + symbol + ": " + e.getMessage());
         }
         
-        // Fallback to simulation if real data fails
-        try {
-            DataSource fallbackSource = DataSourceFactory.createSimulationDataSource();
-            KlineData data = fallbackSource.getRealTimeData(symbol);
-            System.out.println("🔄 Using simulated data for " + symbol);
-            return data;
-        } catch (Exception e) {
-            System.err.println("❌ Even simulation data failed for " + symbol + ": " + e.getMessage());
-            return null;
-        }
+        // No fallback - we only use real data
+        logger.severe("❌ Failed to fetch real data for " + symbol + " - no fallback configured");
+        return null;
     }
     
     public void addToWatchList(String symbol, String name) {
         watchList.put(symbol, name);
+    }
+    
+    // Implementation of TradingEngineInterface methods
+    
+    @Override
+    public Map<String, Position> getCurrentPositions() {
+        return riskManager.getPositions();
+    }
+    
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+    
+    @Override
+    public Map<String, Object> getRecentSignals() {
+        // Return recent signals from AI strategy
+        Map<String, Object> signals = new HashMap<>();
+        signals.put("signals", new Object[0]); // TODO: Implement signal history
+        signals.put("count", 0);
+        return signals;
+    }
+    
+    @Override
+    public Map<String, Object> runBacktestAnalysis() {
+        try {
+            BacktestEngine.BacktestResult result = backtestEngine.runPortfolioBacktest();
+            
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("total_return", result.getTotalReturn());
+            resultMap.put("sharpe_ratio", result.getSharpeRatio());
+            resultMap.put("max_drawdown", result.getMaxDrawdown());
+            resultMap.put("win_rate", result.getWinRate());
+            resultMap.put("total_trades", result.getTrades().size()); // 使用trades列表的大小
+            resultMap.put("initial_capital", result.getInitialCapital());
+            resultMap.put("final_capital", result.getFinalCapital());
+            resultMap.put("backtest_type", "Real portfolio backtest");
+            
+            return resultMap;
+        } catch (Exception e) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("error", "Backtest failed: " + e.getMessage());
+            return result;
+        }
+    }
+    
+    @Override
+    public Map<String, Boolean> testNotificationConfig() {
+        Map<String, Boolean> results = new HashMap<>();
+        results.put("email", false); // TODO: Test email config
+        results.put("wechat", false); // TODO: Test wechat config
+        return results;
+    }
+    
+    @Override
+    public Map<String, Object> getHealthReport() {
+        return healthMonitor.getHealthReport();
+    }
+    
+    @Override
+    public Map<String, Double> getRealTimeIndicators(String symbol) {
+        return dataManager.getIndicators(symbol);
+    }
+    
+    @Override
+    public List<KlineData> getRecentData(String symbol, int count) {
+        return dataManager.getRecentData(symbol, count);
+    }
+    
+    @Override
+    public void restart() throws Exception {
+        System.out.println("🔄 重启智能交易引擎...");
+        stop();
+        Thread.sleep(2000);
+        start();
+        System.out.println("✅ 智能交易引擎重启完成");
+    }
+    
+    @Override
+    public void printHealthSummary() {
+        healthMonitor.printHealthSummary();
+    }
+    
+    @Override
+    public void runManualBacktest() {
+        try {
+            System.out.println("🚀 开始手动回测分析...");
+            Map<String, Object> result = runBacktestAnalysis();
+            
+            System.out.println("\n📈 回测结果:");
+            System.out.println("总收益率: " + String.format("%.2f%%", (Double)result.get("total_return") * 100));
+            System.out.println("夏普比率: " + String.format("%.2f", result.get("sharpe_ratio")));
+            System.out.println("最大回撤: " + String.format("%.2f%%", (Double)result.get("max_drawdown") * 100));
+            System.out.println("胜率: " + String.format("%.1f%%", (Double)result.get("win_rate") * 100));
+            System.out.println("交易次数: " + result.get("total_trades"));
+        } catch (Exception e) {
+            System.err.println("❌ 手动回测失败: " + e.getMessage());
+        }
     }
     
     private String repeat(String str, int count) {
@@ -456,10 +599,6 @@ public class SmartTradingEngine {
         }
     }
     
-    public void runManualBacktest() {
-        System.out.println("🚀 Starting manual portfolio backtest...");
-        runWeeklyBacktest();
-    }
     
     public void stop() {
         isRunning = false;

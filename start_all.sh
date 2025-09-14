@@ -87,8 +87,8 @@ cd platform
 # 使用trap处理中断信号，确保清理Python进程
 trap 'echo ""; echo "🛑 正在停止服务..."; kill $AI_PID 2>/dev/null; echo "✅ 服务已停止"; exit 0' INT TERM
 
-# 运行Java主程序
-mvn exec:java -Dexec.mainClass="com.alvin.quantitative.trading.platform.TradingPlatformApplication" -q
+# 使用SpringBoot方式启动Java主程序 (带项目级settings.xml)
+mvn spring-boot:run -s settings.xml
 
 # 清理Python进程
 kill $AI_PID 2>/dev/null
