@@ -1,151 +1,142 @@
-# AI量化交易平台 v0.1 - 用户使用指南
+# AI量化交易平台 v0.1 - 生产环境用户指南
 
-**作者**: Alvin  
-**版本**: v0.1 (首个版本)  
-**编码**: UTF-8  
-**目标**: 投资级别的AI交易信号系统  
-**更新时间**: 2025年9月13日  
+**作者**: Alvin
+**版本**: v0.1 专业级轻量化Transformer架构
+**编码**: UTF-8
+**系统定位**: 轻量化Transformer AI量化交易平台，本地部署，专业风险管理
+**更新时间**: 2025年9月26日  
 
 ---
 
 ## 🚀 **快速启动**
 
-### **方法1: 生产环境一键启动 (推荐)**
+### **方法1: 推荐一键启动**
 ```bash
 # 1. 进入项目目录
-cd /Users/alvin.wang/alvin-eclipse-workspace-new/quantitative-trading
+cd quantitative-trading
 
-# 2. 一键启动生产环境
-chmod +x start_production.sh
-./start_production.sh
-
-# 3. 看到以下信息表示启动成功:
-# ✅ 生产环境启动完成！
-# 🌐 Web界面: http://localhost:8080
-# 📊 AI服务: http://localhost:5001
-```
-
-### **方法2: 分步启动**
-```bash
-# 终端1: 启动Python AI服务
+# 2. 安装Python依赖
 cd strategy
-python3 ai_model_service.py
+pip3 install -r requirements.txt
 
-# 终端2: 启动Java平台 (新终端窗口)
-cd platform
-mvn clean compile
-mvn dependency:copy-dependencies -DoutputDirectory=target/lib -q
-java -cp "target/classes:target/lib/*" com.alvin.quantitative.trading.platform.TradingPlatformApplication
+# 3. 启动专业级交易平台
+cd ../platform
+mvn clean compile spring-boot:run
+
+# 系统会自动启动AI服务和交易引擎
 ```
 
----
-
-## 🚀 **启动指南**
-
-### **方法1: 一键启动（推荐）**
+### **方法2: 分步启动 (专业级Transformer架构)**
 ```bash
-# 1. 进入项目目录
-cd /Users/alvin.wang/alvin-eclipse-workspace-new/quantitative-trading
-
-# 2. 一键启动所有服务
-chmod +x start_all.sh
-./start_all.sh
-
-# 3. 等待启动完成
-# 看到 "✅ 系统启动完成！" 表示成功
-```
-
-### **方法2: 分步启动**
-```bash
-# 终端1: 启动Python AI服务
+# 终端1: 启动Transformer AI服务
 cd strategy
-python3 ai_model_service.py
+python3 transformer_ai_service.py
 
-# 终端2: 启动Java平台 (新终端窗口)
+# 终端2: 启动专业交易引擎 (新终端)
 cd platform
-mvn clean compile
-mvn dependency:copy-dependencies -DoutputDirectory=target/lib -q
-java -cp "target/classes:target/lib/*" com.alvin.quantitative.trading.platform.TradingPlatformApplication
+mvn clean compile spring-boot:run
 ```
 
 ### **启动成功标志**
 ```
 ✅ 看到以下信息表示启动成功:
-🌐 Web界面: http://localhost:8080
-📊 健康检查: http://localhost:8080/api/health
-🔧 AI服务: http://localhost:5001
-📈 实时数据收集：每 30 秒
-🤖 策略执行：每 180 秒
+🌐 Web控制台: http://localhost:8080
+📊 系统健康检查: http://localhost:8080/api/health
+🤖 Transformer AI服务: http://localhost:5001/health
+📈 市场数据收集: 每30秒
+🔮 交易信号生成: 每180秒 (基于Transformer模型)
+🛡️ 专业风险管理: 每15秒
+💼 智能组合管理: 实时监控
+⚡ 实时性能监控: 持续运行
 ```
 
 ---
 
-## 📊 **交易信号使用指南**
+## 📊 **AI交易信号使用指南**
 
 ### **1. 监控方式**
 
 #### **A. Web界面监控**
 ```
 访问: http://localhost:8080
-- 实时价格监控
-- 技术指标展示
-- 交易信号历史
-- 系统健康状态
+- 实时系统状态
+- AI服务连接状态
+- 最新交易信号
+- 技术指标数据
 ```
 
-#### **B. API接口监控**
+#### **B. API接口监控 (专业级接口)**
 ```bash
-# 获取实时交易信号
-curl -s http://localhost:8080/api/trading-signals | python3 -m json.tool
-
-# 获取技术指标
-curl -s http://localhost:8080/api/indicators | python3 -m json.tool
-
 # 系统健康检查
 curl -s http://localhost:8080/api/health | python3 -m json.tool
+
+# 获取股票技术指标
+curl -s "http://localhost:8080/api/indicators/AAPL" | python3 -m json.tool
+
+# 获取AI交易信号
+curl -s "http://localhost:8080/api/signals/latest" | python3 -m json.tool
+
+# 获取投资组合状态
+curl -s http://localhost:8080/api/portfolio/status | python3 -m json.tool
+
+# 获取风险管理状态
+curl -s http://localhost:8080/api/risk/status | python3 -m json.tool
+
+# Transformer AI服务健康状态
+curl -s http://localhost:5001/health | python3 -m json.tool
+
+# Transformer模型信息
+curl -s http://localhost:5001/model_info | python3 -m json.tool
+
+# 获取AI预测结果
+curl -s -X POST http://localhost:5001/predict \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "AAPL", "period": "1d"}' | python3 -m json.tool
 ```
 
-#### **C. 通知监控**
-- 📧 **邮件通知**: 配置QQ邮箱接收交易信号
-- 💬 **微信通知**: 配置微信机器人接收实时提醒
-- 🖥️ **控制台输出**: 实时查看系统运行状态
+#### **C. 智能通知系统**
+- 📧 **邮件通知**: 仅高置信度信号(≥0.75)才发送邮件
+- 💬 **微信通知**: 支持企业微信机器人通知
+- 🖥️ **控制台日志**: 实时输出系统运行状态和AI信号
 
 ### **2. 交易信号解读**
 
-#### **🎯 标准信号格式**
+#### **🎯 专业级Transformer AI信号格式**
 ```
-🚨 AI交易信号 - 买入信号
-📊 股票: TSLA
-🎯 操作: BUY
-💰 价格: $395.94
-📈 置信度: 87.5%
-🚀 预期收益: 6.8%
-💼 建议仓位: 150万 (15%)
-🛡️ 建议止损: $376.14 (-4%)
-🎯 建议止盈: $455.33 (+12%)
-📝 分析理由: 🚀 超强买入信号组合 | 💪 强势上涨动量 | 📊 成交量激增
-⏰ 时间: 2025-09-13 23:57:00
+🤖 Transformer AI信号 - BUY信号
+📊 股票: AAPL
+🎯 方向: BUY (0:BUY, 1:HOLD, 2:SELL)
+💰 当前价格: $173.25
+📈 AI置信度: 0.832 (83.2%)
+🚀 预期收益率: +0.045 (4.5%)
+🌊 预测波动率: 0.023 (2.3%)
+💼 Kelly优化仓位: 12.8%
+🛡️ 专业风险控制: 止损3%, 止盈8%
+📊 技术指标: RSI=45.2, MACD=0.85, BB_上轨=175.3
+🧠 Transformer特征: 多头注意力权重=0.89
+📈 动量分析: 短期强势, 长期看涨
+⏰ 生成时间: 2025-09-26 10:30:15
+🔄 信号更新: 每3分钟自动刷新
 ```
 
 #### **🔍 信号解读要点**
 
-**置信度等级**:
-- **85%+**: 🔥 超强信号，重仓投资
-- **75-85%**: 💪 强信号，正常仓位
-- **70-75%**: ⚠️ 中等信号，小仓位
-- **<70%**: ❌ 弱信号，不建议投资
+**AI置信度阈值**:
+- **≥0.75**: 🔥 高置信度信号，可执行交易
+- **0.60-0.75**: 💪 中等置信度，谨慎执行
+- **<0.60**: ❌ 低置信度，系统不推送
 
-**预期收益解读**:
-- **>5%**: 🚀 高收益机会，积极参与
-- **3-5%**: 📈 正常收益，适度参与
-- **1-3%**: 📊 小幅收益，谨慎参与
-- **<1%**: 🤔 收益微薄，可忽略
+**预期收益率解读**:
+- **>+0.05**: 🚀 高收益预期(>5%)，值得关注
+- **+0.02~+0.05**: 📈 正常收益预期(2-5%)
+- **0~+0.02**: 📊 小幅收益预期(0-2%)
+- **<0**: ⚠️ 负收益预期，不建议交易
 
-**仓位建议解读**:
-- **150万+**: 🔥 强烈看好，重仓投资
-- **100-150万**: 💪 看好，正常仓位
-- **50-100万**: ⚠️ 谨慎看好，小仓位
-- **<50万**: 🤔 不确定，观望
+**Kelly优化仓位解读**:
+- **15%+**: 🔥 Kelly公式高推荐仓位
+- **10-15%**: 💪 正常推荐仓位
+- **5-10%**: ⚠️ 中等推荐仓位
+- **<5%**: 🤔 小仓位或不操作
 
 ### **3. 操作流程**
 
@@ -167,14 +158,15 @@ curl -s http://localhost:8080/api/health | python3 -m json.tool
    - 调整明日策略
 ```
 
-#### **⚡ 紧急信号处理**
+#### **⚡ 紧急信号处理 (专业级响应)**
 ```
-收到85%+置信度信号时:
-1. 立即验证技术指标
-2. 确认市场流动性
-3. 按建议仓位快速下单
-4. 设置止损止盈订单
-5. 密切监控价格变动
+收到85%+置信度Transformer信号时:
+1. 立即验证Transformer注意力特征
+2. 检查多头注意力权重(≥ 0.85)
+3. 确认动量分析一致性
+4. 按智能仓位管理系统建议下单
+5. 启动专业风险管理机制
+6. 实时监控模型反馈和价格变动
 ```
 
 ---
@@ -310,24 +302,32 @@ curl -s http://localhost:8080/api/health | python3 -m json.tool
 
 ### **1. 健康状态监控**
 
-#### **📊 关键指标监控**
+#### **📊 关键指标监控 (专业级监控)**
 ```bash
 # 每小时检查一次
 curl -s http://localhost:8080/api/health
 
 关注指标:
 - system_healthy: true
-- ai_service: connected  
+- ai_service: connected (Transformer模型)
+- trading_engine: ProfessionalTradingEngine
+- risk_manager: AdvancedRiskManager
+- portfolio_manager: IntelligentPortfolioManager
 - data_source_available: true
+- transformer_model_loaded: true
 - signal_success_rate: >80%
+- attention_weights_valid: true
+- real_time_monitoring: active
 ```
 
 #### **⚠️ 异常处理**
 ```
-AI服务异常:
+Transformer AI服务异常:
 1. 检查Python服务状态
-2. 重启ai_model_service.py
+2. 重启transformer_ai_service.py
 3. 验证端口5001可用
+4. 检查PyTorch和Transformer模型加载
+5. 验证模型文件完整性
 
 数据源异常:
 1. 检查网络连接
@@ -525,19 +525,22 @@ AI置信度: 87.5%
 - 暂停自动交易
 ```
 
-#### **🚨 AI服务异常**
+#### **🚨 Transformer AI服务异常**
 ```
-问题: Python AI服务无响应
+问题: Transformer AI服务无响应
 解决:
 1. 检查端口5001占用
-2. 重启ai_model_service.py
-3. 检查模型文件完整性
-4. 验证Python依赖
+2. 重启transformer_ai_service.py
+3. 验证PyTorch和Transformer模型加载
+4. 检查GPU/CPU资源占用
+5. 验证注意力机制正常
+6. 检查模型文件和依赖
 
-临时方案:
-- 使用技术分析回退策略
-- 人工分析技术指标
-- 保守交易策略
+专业级临时方案:
+- 启用技术分析回退模式
+- 使用传统量化指标
+- 人工验证交易信号
+- 保守型投资策略
 ```
 
 ### **2. 性能优化**
@@ -567,7 +570,9 @@ AI置信度: 87.5%
 ### **联系方式**
 - **开发者**: Alvin
 - **邮箱**: wangjians8813@gmail.com
-- **技术文档**: 查看项目README.md
+- **技术文档**: 查看项目README.md和SYSTEM_DESIGN.md
+- **代码仓库**: 查看项目根目录
+- **系统架构**: 专业级Transformer + Spring Boot微服务架构
 
 ### **紧急情况处理**
 ```
@@ -605,4 +610,26 @@ AI置信度: 87.5%
 
 **🚀 祝您投资成功，实现财富增长！**
 
-*本指南基于当前系统v0.1版本，如有更新请参考最新文档。*
+*本指南基于当前系统v0.1版本 (专业级Transformer架构)，如有更新请参考最新文档。*
+
+---
+
+## 🎆 **系统架构亮点**
+
+### **🧠 专业级AI技术**
+- **Transformer模型**: 业界最优的注意力机制
+- **多头注意力**: 捕捉复杂市场模式
+- **实时推理**: 低延迟交易信号生成
+- **自适应学习**: 模型持续优化
+
+### **🌍 专业级工程架构**
+- **ProfessionalTradingEngine**: 高性能交易引擎
+- **AdvancedRiskManager**: 专业风险管理系统
+- **IntelligentPortfolioManager**: 智能组合管理
+- **Spring Boot微服务**: 企业级稳定性和可扩展性
+
+### **⚡ 实时监控系统**
+- **健康状态监控**: 全系统实时检查
+- **性能指标**: 交易绝殺和收益监控
+- **智能通知**: 关键信号自动推送
+- **故障自愈**: 异常情况自动恢复
