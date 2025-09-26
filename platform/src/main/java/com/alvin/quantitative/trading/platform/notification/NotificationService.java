@@ -294,6 +294,21 @@ public class NotificationService {
         return sb.toString();
     }
     
+    public void sendEmail(String subject, String content) {
+        // Simple email notification method for compatibility
+        System.out.println("\n📧 [EMAIL NOTIFICATION]");
+        System.out.println("Subject: " + subject);
+        System.out.println("Content: " + content);
+        System.out.println("Email functionality temporarily disabled - showing in console\n");
+    }
+
+    public void sendWechat(String message) {
+        // Simple WeChat notification method for compatibility
+        System.out.println("\n💬 [WECHAT NOTIFICATION]");
+        System.out.println("Message: " + message);
+        System.out.println("WeChat functionality - showing in console\n");
+    }
+
     public void shutdown() {
         executorService.shutdown();
         try {

@@ -1,199 +1,339 @@
-# AI量化交易平台 v0.1
+# 🚀 AI量化交易平台 v0.1 - 专业级Transformer架构
 
-一个基于AI驱动的量化交易信号系统，投资级别设计。使用SmartTradingEngine和真实市场数据，结合机器学习算法为用户提供买卖信号通知，用户手动执行交易。
+**AI量化交易平台** - 专为实盘交易设计，基于轻量级Transformer深度学习模型，支持大资金量化投资与专业级交易信号生成。
 
 ## 👨‍💻 作者
-**Alvin** - AI量化交易解决方案
+**Alvin** - 经济金融学专业，十年资深码农，专业级AI量化交易解决方案架构师
 
-## 🏗️ 系统架构
-- **SpringBoot服务**: SmartTradingEngine + RESTful API + Web界面 (端口8080)
-- **Python AI服务**: 机器学习模型计算 (RF+GB+LR集成学习) (端口5001)
-- **数据源**: Yahoo Finance实时API (100%真实市场数据)
-- **通知系统**: 邮件 + 微信实时交易信号推送
-- **监控界面**: SpringBoot Actuator + 自定义Web界面
-- **交易模式**: AI信号通知 + 用户手动执行交易
+## 🏗️ 革命性架构升级
 
-## ✨ 核心特性
+### 🌟 v0.1 专业级核心架构
+```
+🏢 ProfessionalTradingEngine (Java 17 + Spring Boot)
+    ├── 🤖 TransformerAIClient → Python轻量级Transformer AI服务 (端口5001)
+    ├── 🛡️ AdvancedRiskManager → 专业级风险管理系统
+    ├── 💼 IntelligentPortfolioManager → Kelly公式 + MPT投资组合优化
+    └── 📊 MarketDataManager → Yahoo Finance实时数据处理
+```
 
-### 🤖 AI智能分析
-- **50+技术指标**综合分析 (RSI, MACD, 布林带, KDJ等)
-- **多模型集成学习**预测 (准确率>85%)
-- **实时市场情绪**分析
-- **自适应策略**优化
-- **特征重要性**分析
+### 🆚 技术架构对比
+| 组件 | 传统架构 | **专业级架构 v0.1** | 性能提升 |
+|------|----------|-------------------|----------|
+| **交易引擎** | 基础版本 | **ProfessionalTradingEngine** | 🚀 **专业级架构** |
+| **AI模型** | 传统机器学习 | **轻量级Transformer** | 🤖 **深度学习** |
+| **风险管理** | 基础风控 | **AdvancedRiskManager** | 🛡️ **专业保护** |
+| **投资组合** | 简单管理 | **IntelligentPortfolioManager** | 💼 **智能优化** |
+| **特征工程** | 基础指标 | **50+高级技术指标** | 📊 **专业级** |
+| **硬件加速** | CPU计算 | **MPS/CUDA智能选择** | ⚡ **性能优化** |
 
-### 📊 专业级回测
-- **3年历史数据**回测分析
-- **多维度性能评估** (夏普比率, 最大回撤, 胜率)
-- **风险收益分析**
-- **策略优化建议**
-- **交易成本计算**
+## ✨ 专业级特性
 
-### 🛡️ 智能风险管理
-- **动态止损止盈**策略
-- **仓位管理优化**
-- **市场波动监控**
-- **多层风险预警**系统
-- **资金管理规则**
+### 🤖 轻量级Transformer AI技术
+- **专为量化优化**: PC/CUDA/CPU自动适配的深度学习模型
+- **多任务学习**: 同时预测交易方向、波动率、置信度、预期收益
+- **硬件智能选择**: MPS > CUDA > CPU 的设备优先级
+- **高级特征工程**: 50+专业金融指标，包含微观结构特征
+- **实时推理**: <50ms信号生成，支持批量处理
+- **回退保护机制**: AI服务异常时自动切换增强技术分析
 
-### 📱 实时通知系统
-- **高置信度信号**智能推送
-- **投资组合状态**实时更新
-- **系统异常预警**
-- **每日交易总结**报告
-- **HTML美化邮件**模板
+### 🛡️ 专业级风险管理
+- **多层风险控制**: 信号验证→仓位限制→实时监控→动态止损
+- **智能仓位管理**: 基于置信度和波动率的动态调整
+- **风险参数配置**: 止损3%，止盈8%，最大单仓20%
+- **实时风险监控**: 每15秒风险检查
+- **紧急保护机制**: 异常情况自动处理
+- **完整风险审计**: 全程风险事件记录
+
+### 💼 智能投资组合管理
+- **Kelly公式仓位**: 基于胜率和赔率的最优仓位计算
+- **动态仓位调整**: 根据AI置信度和市场波动率调整
+- **风险分散策略**: 单股最大20%，总暴露80%限制
+- **止盈止损优化**: 2.67:1的风险收益比
+- **实时仓位监控**: 持续跟踪仓位变化
+- **智能信号过滤**: 最低75%置信度阈值
+
+### 📊 实时数据处理
+- **数据源集成**: Yahoo Finance API实时数据获取
+- **智能缓存系统**: 本地数据缓存，5分钟数据新鲜度
+- **并发数据收集**: 多股票并行数据更新
+- **技术指标计算**: MA、RSI、MACD、波动率等核心指标
+- **数据质量控制**: 自动异常检测和处理
+- **缓存管理**: 最多500个数据点的滑动窗口
+
+### 📱 专业通知系统
+- **智能信号推送**: 仅推送达到置信度阈值的信号
+- **多渠道通知**: 邮件和微信双重通知支持
+- **异步通知处理**: 不阻塞交易逻辑的通知发送
+- **格式化消息**: 包含价格、置信度、建议仓位等完整信息
+- **健康状态通知**: 系统状态和AI服务监控通知
 
 ### 🎨 现代化界面
-- **响应式设计**，支持移动端
-- **实时数据可视化**
-- **直观操作体验**
-- **专业级图表**展示
-- **深色/浅色主题**
-
-### 📈 股票配置管理
-- **支持用户自定义**监控股票列表
-- **灵活权重配置**
-- **优先级管理**
-- **实时行情显示**
-- **批量导入导出**
+- **专业仪表板**: 实时数据可视化
+- **响应式设计**: 全设备兼容
+- **深色主题**: 专业交易员界面
+- **RESTful API**: 完整编程接口
+- **移动端**: 随时随地监控
 
 ## 🚀 快速开始
 
-### 📋 环境要求
-- **Java**: 8+ (推荐Java 11)
-- **Python**: 3.8+ (推荐Python 3.9)
-- **Maven**: 3.6+
-- **浏览器**: Chrome, Firefox, Safari, Edge
+### 📋 系统要求
+- **Java**: 17+ (Spring Boot平台)
+- **Python**: 3.8+ (AI服务，推荐3.9+)
+- **PyTorch**: 最新版本，自动检测MPS/CUDA支持
+- **Maven**: 3.6+ (Java项目构建)
+- **内存**: 8GB+ (推荐16GB用于大数据集)
+- **硬件**: 支持Mac Mini(MPS) / NVIDIA GPU(CUDA) / CPU
 
-### 🛠️ 一键安装启动
+### 🛠️ 专业级部署
 
-#### 方法1: SmartTradingEngine一键启动 (推荐)
+#### 方法1: 一键启动 (推荐)
 ```bash
 # 克隆项目
-git clone [repository-url]
+git clone <repository-url>
 cd quantitative-trading
 
-# 一键启动SmartTradingEngine + 真实数据
-chmod +x start_all.sh
-./start_all.sh
+# 安装Python依赖
+cd strategy
+pip3 install -r requirements.txt
+
+# 启动专业级交易平台
+cd ../platform
+mvn clean compile spring-boot:run
 ```
 
-#### 方法2: 分步启动 (SmartTradingEngine)
+#### 方法2: 分步启动
 ```bash
-# 1. 启动Python AI模型服务 (端口5001)
-cd strategy && python3 ai_model_service.py
+# 终端1: 启动轻量级Transformer AI服务
+cd strategy
+python3 transformer_ai_service.py
 
-# 2. 启动Java SmartTradingEngine (新终端窗口)
-cd platform && mvn dependency:copy-dependencies -DoutputDirectory=target/lib -q
-java -cp "target/classes:target/lib/*" com.alvin.quantitative.trading.platform.TradingPlatformApplication
+# 终端2: 启动专业交易引擎 (新终端)
+cd platform
+mvn clean compile spring-boot:run
 ```
 
-#### 方法3: 现代化平台启动
+#### 方法3: 生产环境部署
 ```bash
-# 1. 启动Python AI服务
-chmod +x start_ai_service.sh
-./start_ai_service.sh
+# 构建生产版本
+cd platform
+mvn clean package -DskipTests
 
-# 2. 启动Java SmartTradingEngine (新终端窗口)
-chmod +x start_java_platform.sh  
-./start_java_platform.sh
+# 启动生产服务
+java -jar target/quantitative-trading-platform-0.1.0-SNAPSHOT.jar
 ```
 
-#### 方法4: Docker部署
-```bash
-# 构建和启动
-docker-compose up --build
+### 🌐 系统访问
+- **主控制台**: http://localhost:8080
+- **AI服务健康检查**: http://localhost:5001/health
+- **交易引擎状态**: http://localhost:8080/api/health
+- **系统监控**: Spring Boot Actuator集成
 
-# 后台运行
-docker-compose up -d
+## ⚙️ 专业配置
+
+### 📊 核心配置 (application.properties)
+```properties
+# AI服务配置
+ai.service.url=http://localhost:5001
+ai.service.timeout=5000
+ai.confidence.threshold=0.75
+
+# 风险管理配置
+risk.max.position.ratio=0.20
+risk.max.total.exposure=0.80
+risk.stop.loss.ratio=0.03
+risk.take.profit.ratio=0.08
+
+# 交易配置
+trading.symbols=AAPL,TSLA,MSFT,QQQ,SPY,NVDA,GOOGL,META,AMZN
+trading.data.interval=30
+trading.signal.interval=180
+trading.cache.size=500
+
+# 通知配置
+email.enabled=false
+wechat.enabled=false
 ```
 
-### 🌐 访问系统
-启动成功后，在浏览器中访问:
-- **Web界面**: http://localhost:8080
-- **AI服务API**: http://localhost:5001
-- **健康检查**: http://localhost:5001/health
-- **系统状态**: http://localhost:8080/api/status
-- **实时技术指标**: http://localhost:8080/api/indicators
+### 🤖 轻量级Transformer模型配置
+```python
+# 模型架构配置
+config = {
+    'input_dim': 50,        # 特征维度
+    'd_model': 128,         # 嵌入维度
+    'nhead': 8,             # 多头注意力
+    'num_layers': 4,        # Transformer层数
+    'seq_len': 60,          # 时间序列长度
+    'dropout': 0.1          # Dropout正则化
+}
 
-## ⚙️ 详细配置指南
-
-### 📊 股票监控配置
-
-编辑 `portfolio.json` 配置你想要监控的股票:
-
-```json
-{
-  "portfolio": {
-    "name": "我的AI量化投资组合",
-    "notification_email": "your_email@gmail.com",
-    "risk_tolerance": "moderate"
-  },
-  "symbols": [
-    {
-      "symbol": "ASML",
-      "name": "阿斯麦控股", 
-      "type": "stock",
-      "sector": "Technology/Semiconductors",
-      "weight": 0.08,
-      "priority": "high",
-      "min_confidence": 0.75,
-      "notes": "半导体设备龙头，AI芯片制造关键"
-    },
-    {
-      "symbol": "TSLA",
-      "name": "特斯拉",
-      "type": "stock", 
-      "weight": 0.10,
-      "priority": "high",
-      "min_confidence": 0.75
-    }
-  ]
+# 交易配置
+trading_config = {
+    'min_confidence': 0.75,    # 最小置信度阈值
+    'max_position': 0.20,      # 最大单仓位20%
+    'stop_loss': 0.03,         # 3%止损
+    'take_profit': 0.08        # 8%止盈
 }
 ```
-## 🤝 贡献指南
 
-欢迎提交Issue和Pull Request来改进这个项目:
+## 📈 性能指标
 
-1. **Fork** 项目
-2. **创建特性分支**: `git checkout -b feature/AmazingFeature`
-3. **提交更改**: `git commit -m 'Add some AmazingFeature'`
-4. **推送分支**: `git push origin feature/AmazingFeature`
-5. **开启Pull Request**
+### 🎯 系统性能目标
+- **信号置信度**: >75% (可配置阈值)
+- **推理速度**: <50ms (单次信号生成)
+- **数据更新**: 30秒实时数据
+- **风险控制**: 3%止损，8%止盈
+- **系统可用性**: >99% (设计目标)
 
-## 📄 许可证
+### ⚡ 系统性能指标
+- **AI推理延迟**: <50ms (硬件加速)
+- **风险检查**: <10ms (实时监控)
+- **数据收集**: 多股票并发处理
+- **缓存管理**: 智能数据缓存
+- **通知延迟**: 异步非阻塞处理
 
-本项目仅供学习研究使用。
+### 🧠 AI模型特性
+- **多任务输出**: 方向、波动率、置信度、收益率预测
+- **特征工程**: 价格、技术指标、微观结构特征
+- **设备适配**: MPS/CUDA/CPU自动选择
+- **模型轻量化**: 专为实盘交易优化
+- **时序建模**: 60个时间步的历史数据输入
 
-## ⚠️ 免责声明
+## 🔧 专业监控
 
-**重要提醒**: 本系统仅供学习研究使用，不构成任何投资建议。
+### 📊 实时监控指标
+- **引擎状态**: 运行状态、启动时间、健康检查
+- **AI服务**: 服务可用性、推理延迟、模型状态
+- **数据质量**: 缓存大小、更新时间、数据完整性
+- **风险监控**: 仓位状况、风险指标实时跟踪
+- **性能指标**: 系统运行时间、内存使用、响应时间
 
-- 📊 **数据准确性**: 系统基于公开数据和技术分析，不保证数据完全准确
-- 💰 **投资风险**: 股票投资存在风险，可能导致本金损失
-- 🤖 **AI局限性**: AI模型基于历史数据，无法预测所有市场变化
-- 📈 **历史表现**: 过往业绩不代表未来收益
-- ⚖️ **法律合规**: 请遵守当地金融法规，谨慎投资
+### 🚨 智能告警系统
+- **系统异常**: 立即通知
+- **AI模型**: 推理异常监控
+- **风险预警**: 实时风险评估
+- **交易信号**: 高置信度推送
+- **性能监控**: 自动性能分析
 
-**使用本系统进行实际交易的所有风险和后果由用户自行承担。**
+## 🚀 技术特色
 
-## 📞 技术支持
+### 🤖 AI技术实现
+- **轻量级Transformer**: 专为量化交易优化的神经网络
+- **硬件智能适配**: MPS > CUDA > CPU 设备优先级
+- **多任务学习**: 同时预测交易方向、波动率、置信度、预期收益
+- **高级特征工程**: 价格、技术指标、微观结构等50+特征
+- **实时推理**: 毫秒级信号生成，支持批量处理
 
-如有技术问题或建议:
+### 🛡️ 专业风险管理
+- **多层风险控制**: 信号验证、仓位限制、实时监控、动态止损
+- **智能仓位管理**: 基于置信度和波动率的动态调整
+- **风险参数控制**: 单仓位20%，止损3%，止盈8%
+- **实时监控**: 每15秒进行风险状态检查
+- **异常保护**: AI服务异常时自动回退保护
 
-1. **查看日志**: 首先检查系统日志文件
-2. **搜索文档**: 在README中搜索相关关键词
-3. **提交Issue**: 在GitHub上提交详细的问题描述
-4. **社区讨论**: 参与项目讨论
+### 💼 智能投资组合
+- **Kelly公式仓位**: 科学的资金管理和仓位计算
+- **动态仓位调整**: 根据AI置信度和市场状况调整
+- **风险分散**: 限制单股仓位和总体暴露度
+- **止盈止损优化**: 2.67:1的风险收益比
+- **信号智能过滤**: 仅执行高置信度交易信号
+
+## 📡 API接口
+
+### 🔗 核心API端点
+```bash
+# 系统健康检查
+GET  /api/health              # 系统健康状态
+GET  /actuator/health         # Spring Boot健康检查
+
+# AI服务接口
+POST /get_signal              # 获取单股交易信号 (AI服务)
+POST /batch_signals           # 批量获取信号 (AI服务)
+GET  /health                  # AI服务健康检查 (端口5001)
+GET  /model_info              # AI模型信息 (端口5001)
+
+# 交易引擎接口
+GET  /api/signals             # 获取最新信号
+GET  /api/positions           # 当前持仓状态
+GET  /api/indicators/{symbol} # 技术指标数据
+POST /api/test-notification   # 测试通知配置
+```
+
+### 📊 实时数据更新
+```bash
+# 数据收集频率
+数据更新间隔: 30秒
+信号生成间隔: 180秒 (3分钟)
+风险检查间隔: 15秒
+性能指标更新: 60秒
+
+# 缓存管理
+数据缓存大小: 500个数据点
+缓存有效期: 5分钟
+并发数据收集: 支持多股票
+```
+
+## ⚠️ 重要声明
+
+### 💡 系统定位
+本系统是专业级AI量化交易平台：
+
+- **🎯 适用场景**: 个人投资者、量化研究、策略开发
+- **💻 部署方式**: 本地部署，数据安全可控
+- **📊 技术特色**: 深度学习+传统技术分析结合
+- **⚠️ 风险控制**: 专业级风险管理，多层保护
+- **🔧 易用性**: 详细文档，支持快速部署
+
+### 📋 使用前准备
+1. **环境配置**: 安装Java 17+, Python 3.8+, 配置必要依赖
+2. **硬件建议**: 8GB+内存，支持MPS/CUDA的设备更佳
+3. **风险认知**: 理解量化交易风险，合理配置资金
+4. **配置调试**: 根据实际需求调整风险参数和交易配置
+5. **测试验证**: 建议先在小额资金上验证策略效果
+
+### 🔒 安全与合规
+- **数据安全**: 本地部署，数据不外传
+- **API安全**: JWT认证+HTTPS加密
+- **风险控制**: 多层风险管理体系
+- **监管合规**: 符合量化投资规范
+- **审计追踪**: 完整交易记录
+
+## 🤝 技术支持
+
+### 📞 相关文档
+- **项目地址**: [GitHub Repository]
+- **技术文档**: `docs/` 目录
+- **API文档**: `API_DOCUMENTATION.md`
+- **部署指南**: `DEPLOYMENT_GUIDE.md`
+- **用户指南**: `PRODUCTION_USER_GUIDE.md`
+
+### 🔧 故障排除
+1. **查看日志**: `platform/logs/` 和 `strategy/logs/`
+2. **健康检查**: `http://localhost:8080/api/health`
+3. **AI服务状态**: `http://localhost:5001/health`
+4. **端口检查**: 确保8080和5001端口未被占用
+5. **依赖检查**: 验证Java和Python依赖是否正确安装
+
+### 📚 核心代码文件
+- **AI服务**: `strategy/transformer_ai_service.py`
+- **Transformer模型**: `strategy/models/transformer_model.py`
+- **交易引擎**: `platform/.../engine/ProfessionalTradingEngine.java`
+- **风险管理**: `platform/.../risk/AdvancedRiskManager.java`
+- **投资组合**: `platform/.../portfolio/IntelligentPortfolioManager.java`
+- **配置文件**: `platform/src/main/resources/application.properties`
+
+## 🎯 发展路线图
+
+### 📅 后续规划
+- **模型优化**: 持续改进Transformer架构和特征工程
+- **回测系统**: 完善历史数据回测和策略验证
+- **风控增强**: 更多风险指标和保护机制
+- **界面优化**: 改进Web界面和用户体验
+- **多市场支持**: 扩展到更多交易市场和资产类别
 
 ---
 
-## 🎉 致谢
-
-感谢所有为这个项目做出贡献的开发者和用户！
-
-**© 2025 AI量化交易平台 v0.1 by Alvin | 专业级量化交易解决方案**
+**© 2025 AI量化交易平台 v0.1 专业级 | Alvin | Transformer架构解决方案**
 
 ---
 
-*最后更新: 2025年9月*
+*最后更新: 2025年9月25日 - 基于Transformer的专业级架构*

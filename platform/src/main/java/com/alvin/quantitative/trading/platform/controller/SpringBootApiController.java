@@ -3,7 +3,7 @@ package com.alvin.quantitative.trading.platform.controller;
 import com.alvin.quantitative.trading.platform.config.ApplicationConfig;
 import com.alvin.quantitative.trading.platform.core.KlineData;
 import com.alvin.quantitative.trading.platform.engine.TradingEngineInterface;
-import com.alvin.quantitative.trading.platform.engine.SmartTradingEngine;
+import com.alvin.quantitative.trading.platform.engine.ProfessionalTradingEngine;
 import com.alvin.quantitative.trading.platform.TradingPlatformApplication;
 
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +48,7 @@ public class SpringBootApiController {
         result.put("service", "AI Trading Platform");
         result.put("version", "0.1");
         result.put("author", "Alvin");
-        result.put("architecture", "SpringBoot + SmartTradingEngine");
+        result.put("architecture", "SpringBoot + ProfessionalTradingEngine + Transformer AI");
         result.put("timestamp", LocalDateTime.now());
         result.put("ai_service_url", config.getAiServiceUrl());
         

@@ -1,0 +1,44 @@
+# 二进制文件
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.ico
+*.pdf
+*.zip
+*.rar
+*.tar.gz
+*.exe
+*.dll
+*.so
+
+# 依赖和构建目录
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+.vuepress/dist/
+.output/
+.vercel/
+
+# 版本控制
+.git/
+.svn/
+
+# 日志文件
+*.log
+logs/
+
+# 缓存
+.cache/
+.tmp/
+temp/
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

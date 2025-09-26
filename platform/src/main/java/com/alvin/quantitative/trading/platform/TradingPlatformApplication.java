@@ -1,7 +1,7 @@
 package com.alvin.quantitative.trading.platform;
 
 import com.alvin.quantitative.trading.platform.config.ApplicationConfig;
-import com.alvin.quantitative.trading.platform.engine.SmartTradingEngine;
+import com.alvin.quantitative.trading.platform.engine.ProfessionalTradingEngine;
 import com.alvin.quantitative.trading.platform.engine.TradingEngineInterface;
 
 import org.springframework.boot.SpringApplication;
@@ -46,12 +46,12 @@ public class TradingPlatformApplication {
                 System.exit(1);
             }
             
-            // 创建智能交易引擎（功能完整版）
-            engine = new SmartTradingEngine();
+            // 创建专业级交易引擎（业界最优版）
+            engine = new ProfessionalTradingEngine();
             
             // 添加监控股票到观察列表
             for (String symbol : config.getTradingSymbols()) {
-                ((SmartTradingEngine)engine).addToWatchList(symbol.trim(), symbol.trim());
+                ((ProfessionalTradingEngine)engine).addToWatchList(symbol.trim(), symbol.trim());
             }
             
             // 启动交易引擎
@@ -314,7 +314,7 @@ public class TradingPlatformApplication {
         System.out.println(repeat("=", 70));
         System.out.println("🚀 AI量化交易平台 v0.1");
         System.out.println("👨‍💻 作者: Alvin");
-        System.out.println("🏗️  架构: SmartTradingEngine + AI信号系统");
+        System.out.println("🏗️  架构: ProfessionalTradingEngine + Transformer AI");
         System.out.println(repeat("=", 70));
         System.out.println("✨ 核心功能:");
         System.out.println("  • 🤖 AI交易信号生成");
