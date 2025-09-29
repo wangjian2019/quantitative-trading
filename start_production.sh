@@ -46,7 +46,7 @@ fi
 
 if lsof -i:5001 &> /dev/null; then
     echo -e "${YELLOW}⚠️ 警告: 端口5001被占用，正在尝试释放...${NC}"
-    pkill -f "ai_model_service" 2>/dev/null
+    pkill -f "ai_service" 2>/dev/null
     sleep 3
 fi
 
@@ -113,7 +113,7 @@ if ! python3 -c "import flask, pandas, numpy, sklearn" 2>/dev/null; then
     pip3 install -r requirements.txt -q
 fi
 
-python3 ai_model_service.py &
+python3 ai_service.py &
 AI_PID=$!
 echo -e "${GREEN}✅ Python AI服务已启动 (PID: $AI_PID)${NC}"
 

@@ -14,7 +14,8 @@ import com.alvin.quantitative.trading.platform.config.ApplicationConfig;
 import org.springframework.stereotype.Component;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
-import lombok.extern.slf4j.Slf4j;
+
+import java.util.logging.Logger;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,9 +33,10 @@ import java.util.stream.Collectors;
  * - 实时性能监控
  * - 支持大资金量化交易
  */
-@Slf4j
 @Component
 public class ProfessionalTradingEngine implements TradingEngineInterface {
+
+    private static final Logger log = Logger.getLogger(ProfessionalTradingEngine.class.getName());
 
     // 核心组件
     private final TransformerAIClient aiClient;
@@ -91,7 +93,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             this.dataSource.initialize(dataSourceConfig);
             log.info("✅ Data source initialized successfully");
         } catch (Exception e) {
-            log.error("❌ Failed to initialize data source: {}", e.getMessage());
+            log.severe("❌ Failed to initialize data source: " + e.getMessage());
         }
 
         // 初始化线程池
@@ -113,7 +115,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
         this.lastSignalGenerated = LocalDateTime.now();
 
         log.info("✅ Professional Trading Engine initialized successfully");
-        log.info("📊 Watching {} symbols", watchList.size());
+        log.info("📊 Watching " + watchList.size() + " symbols");
         log.info("🤖 AI Client: Transformer-based signal generation");
         log.info("🛡️ Risk Management: Advanced multi-layer protection");
     }
@@ -121,7 +123,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
     @Override
     public void start() {
         if (isRunning) {
-            log.warn("⚠️ Trading engine is already running");
+            log.warning("⚠️ Trading engine is already running");
             return;
         }
 
@@ -163,12 +165,12 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             );
 
             log.info("✅ All trading engine tasks started successfully");
-            log.info("📈 Data collection: Every {} seconds", DATA_COLLECTION_INTERVAL);
-            log.info("🤖 Signal generation: Every {} seconds", SIGNAL_GENERATION_INTERVAL);
+            log.info("📈 Data collection: Every " + DATA_COLLECTION_INTERVAL + " seconds");
+            log.info("🤖 Signal generation: Every " + SIGNAL_GENERATION_INTERVAL + " seconds");
             log.info("🛡️ Risk monitoring: Every 15 seconds");
 
         } catch (Exception e) {
-            log.error("❌ Failed to start trading engine: {}", e.getMessage(), e);
+            log.severe("❌ Failed to start trading engine: " + e.getMessage());
             isRunning = false;
             throw new RuntimeException("Trading engine startup failed", e);
         }
@@ -177,7 +179,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
     @Override
     public void stop() {
         if (!isRunning) {
-            log.warn("⚠️ Trading engine is not running");
+            log.warning("⚠️ Trading engine is not running");
             return;
         }
 
@@ -201,7 +203,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             log.info("✅ Trading engine stopped successfully");
 
         } catch (InterruptedException e) {
-            log.error("❌ Error during trading engine shutdown: {}", e.getMessage());
+            log.severe("❌ Error during trading engine shutdown: " + e.getMessage());
             Thread.currentThread().interrupt();
             scheduledExecutor.shutdownNow();
             taskExecutor.shutdownNow();
@@ -226,7 +228,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
     @Async
     private void collectMarketData() {
         try {
-            log.debug("📊 Collecting market data for {} symbols...", watchList.size());
+            log.fine("📊 Collecting market data for " + watchList.size() + " symbols...");
 
             List<CompletableFuture<Void>> futures = watchList.stream()
                 .map(symbol -> CompletableFuture.runAsync(() -> collectSymbolData(symbol), taskExecutor))
@@ -237,10 +239,10 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
                 .get(25, TimeUnit.SECONDS);
 
             lastDataUpdate = LocalDateTime.now();
-            log.debug("✅ Market data collection completed");
+            log.fine("✅ Market data collection completed");
 
         } catch (Exception e) {
-            log.error("❌ Market data collection failed: {}", e.getMessage(), e);
+            log.severe("❌ Market data collection failed: " + e.getMessage());
         }
     }
 
@@ -249,7 +251,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             // 获取实时数据
             KlineData latestData = dataSource.getRealTimeData(symbol);
             if (latestData == null) {
-                log.warn("⚠️ No data received for symbol: {}", symbol);
+                log.warning("⚠️ No data received for symbol: " + symbol);
                 return;
             }
 
@@ -271,7 +273,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             }
 
         } catch (Exception e) {
-            log.error("❌ Failed to collect data for symbol {}: {}", symbol, e.getMessage());
+            log.severe("❌ Failed to collect data for symbol " + symbol + ": " + e.getMessage());
         }
     }
 
@@ -292,7 +294,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             technicalIndicators.put(symbol, indicators);
 
         } catch (Exception e) {
-            log.error("❌ Failed to update technical indicators for {}: {}", symbol, e.getMessage());
+            log.severe("❌ Failed to update technical indicators for " + symbol + ": " + e.getMessage());
         }
     }
 
@@ -304,7 +306,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
         if (!isRunning) return;
 
         try {
-            log.info("🤖 Generating trading signals for {} symbols...", watchList.size());
+            log.info("🤖 Generating trading signals for " + watchList.size() + " symbols...");
 
             List<CompletableFuture<Void>> futures = watchList.stream()
                 .map(symbol -> CompletableFuture.runAsync(() -> generateSignalForSymbol(symbol), taskExecutor))
@@ -318,7 +320,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             log.info("✅ Trading signal generation completed");
 
         } catch (Exception e) {
-            log.error("❌ Trading signal generation failed: {}", e.getMessage(), e);
+            log.severe("❌ Trading signal generation failed: " + e.getMessage());
         }
     }
 
@@ -329,7 +331,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             Map<String, Double> indicators = technicalIndicators.get(symbol);
 
             if (cache == null || cache.isEmpty() || indicators == null) {
-                log.debug("📊 Insufficient data for signal generation: {}", symbol);
+                log.fine("📊 Insufficient data for signal generation: " + symbol);
                 return;
             }
 
@@ -340,13 +342,13 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             AISignal signal = aiClient.getTransformerSignal(symbol, currentData, indicators, history);
 
             if (signal == null) {
-                log.warn("⚠️ No signal generated for {}", symbol);
+                log.warning("⚠️ No signal generated for " + symbol);
                 return;
             }
 
             // 风险管理检查
             if (!riskManager.validateSignal(symbol, signal, currentData.getClose())) {
-                log.debug("🛡️ Signal rejected by risk management for {}", symbol);
+                log.fine("🛡️ Signal rejected by risk management for " + symbol);
                 return;
             }
 
@@ -356,15 +358,15 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             // 发送通知
             if (signal.getConfidence() >= config.getMinConfidence()) {
                 sendTradingNotification(symbol, signal, currentData);
-                log.info("📨 Trading signal sent for {}: {} (confidence: {:.2%})",
-                    symbol, signal.getAction(), signal.getConfidence());
+                log.info(String.format("📨 Trading signal sent for %s: %s (confidence: %.2f%%)",
+                    symbol, signal.getAction(), signal.getConfidence() * 100));
             }
 
             // 更新性能指标
             updateSignalMetrics(symbol, signal);
 
         } catch (Exception e) {
-            log.error("❌ Failed to generate signal for {}: {}", symbol, e.getMessage());
+            log.severe("❌ Failed to generate signal for " + symbol + ": " + e.getMessage());
         }
     }
 
@@ -385,12 +387,12 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
                         notificationService.sendWechat(message);
                     }
                 } catch (Exception e) {
-                    log.error("❌ Notification sending failed: {}", e.getMessage());
+                    log.severe("❌ Notification sending failed: " + e.getMessage());
                 }
             }, taskExecutor);
 
         } catch (Exception e) {
-            log.error("❌ Failed to send trading notification: {}", e.getMessage());
+            log.severe("❌ Failed to send trading notification: " + e.getMessage());
         }
     }
 
@@ -556,7 +558,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
         try {
             riskManager.performRealTimeRiskCheck(currentPositions, marketDataCache);
         } catch (Exception e) {
-            log.error("❌ Risk monitoring failed: {}", e.getMessage());
+            log.severe("❌ Risk monitoring failed: " + e.getMessage());
         }
     }
 
@@ -573,7 +575,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
                 java.time.Duration.between(lastDataUpdate, LocalDateTime.now()).toMinutes());
 
         } catch (Exception e) {
-            log.error("❌ Performance metrics update failed: {}", e.getMessage());
+            log.severe("❌ Performance metrics update failed: " + e.getMessage());
         }
     }
 
@@ -588,13 +590,13 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
     // 实现TradingEngineInterface的其他方法
     public void addToWatchList(String symbol, String name) {
         watchList.add(symbol.toUpperCase());
-        log.info("📈 Added {} to watchlist", symbol);
+        log.info("📈 Added " + symbol + " to watchlist");
     }
 
     public boolean removeFromWatchList(String symbol) {
         boolean removed = watchList.remove(symbol.toUpperCase());
         if (removed) {
-            log.info("📉 Removed {} from watchlist", symbol);
+            log.info("📉 Removed " + symbol + " from watchlist");
         }
         return removed;
     }
@@ -649,11 +651,11 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
     @Override
     public void printHealthSummary() {
         log.info("🏥 Professional Trading Engine Health Summary:");
-        log.info("   Status: {}", isRunning ? "✅ Running" : "❌ Stopped");
-        log.info("   Watched Symbols: {}", watchList.size());
-        log.info("   Cached Data: {}", marketDataCache.size());
-        log.info("   Last Data Update: {}", lastDataUpdate);
-        log.info("   Last Signal: {}", lastSignalGenerated);
+        log.info("   Status: " + (isRunning ? "✅ Running" : "❌ Stopped"));
+        log.info("   Watched Symbols: " + watchList.size());
+        log.info("   Cached Data: " + marketDataCache.size());
+        log.info("   Last Data Update: " + lastDataUpdate);
+        log.info("   Last Signal: " + lastSignalGenerated);
         log.info("   AI Client: ✅ Transformer Model");
         log.info("   Risk Manager: ✅ Advanced Protection");
         log.info("   Portfolio Manager: ✅ Intelligent Optimization");
@@ -672,7 +674,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             }
         } catch (Exception e) {
             results.put("email", false);
-            log.error("Email test failed: {}", e.getMessage());
+            log.severe("Email test failed: " + e.getMessage());
         }
 
         try {
@@ -684,7 +686,7 @@ public class ProfessionalTradingEngine implements TradingEngineInterface {
             }
         } catch (Exception e) {
             results.put("wechat", false);
-            log.error("WeChat test failed: {}", e.getMessage());
+            log.severe("WeChat test failed: " + e.getMessage());
         }
 
         return results;

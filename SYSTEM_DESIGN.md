@@ -444,7 +444,7 @@ public ResponseEntity<Map<String, Boolean>> testNotificationConfig() {
     // 测试通知配置
 }
 
-// AI服务端点 (transformer_ai_service.py):
+// AI服务端点 (ai_service.py):
 @app.route('/health', methods=['GET'])
 def health_check():
     # AI服务健康检查
@@ -695,7 +695,7 @@ private void updatePerformanceMetrics() {
 
 1. 🚀 部署流程:
    # 一键启动脚本
-   cd strategy && python3 transformer_ai_service.py &
+   cd strategy && python3 ai_service.py &
    cd platform && mvn clean compile spring-boot:run
 
    # 健康检查
@@ -715,8 +715,8 @@ private void updatePerformanceMetrics() {
 
 3. 🛠️ 故障处理:
    # 服务重启
-   pkill -f transformer_ai_service.py
-   cd strategy && python3 transformer_ai_service.py &
+   pkill -f ai_service.py
+   cd strategy && python3 ai_service.py &
 
    # 清理缓存
    rm -rf strategy/logs/*.log
@@ -724,7 +724,7 @@ private void updatePerformanceMetrics() {
 
 4. 📋 运维脚本:
    # 日志查看
-   tail -f strategy/logs/transformer_ai_service.log
+   tail -f strategy/logs/ai_service.log
    tail -f platform/logs/application.log
 
    # 性能监控

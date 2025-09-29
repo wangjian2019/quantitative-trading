@@ -30,7 +30,7 @@ mvn clean compile spring-boot:run
 ```bash
 # 终端1: 启动Transformer AI服务
 cd strategy
-python3 transformer_ai_service.py
+python3 ai_service.py
 
 # 终端2: 启动专业交易引擎 (新终端)
 cd platform
@@ -324,7 +324,7 @@ curl -s http://localhost:8080/api/health
 ```
 Transformer AI服务异常:
 1. 检查Python服务状态
-2. 重启transformer_ai_service.py
+2. 重启ai_service.py
 3. 验证端口5001可用
 4. 检查PyTorch和Transformer模型加载
 5. 验证模型文件完整性
@@ -530,7 +530,7 @@ AI置信度: 87.5%
 问题: Transformer AI服务无响应
 解决:
 1. 检查端口5001占用
-2. 重启transformer_ai_service.py
+2. 重启ai_service.py
 3. 验证PyTorch和Transformer模型加载
 4. 检查GPU/CPU资源占用
 5. 验证注意力机制正常

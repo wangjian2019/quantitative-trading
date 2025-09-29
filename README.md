@@ -105,7 +105,7 @@ mvn clean compile spring-boot:run
 ```bash
 # 终端1: 启动轻量级Transformer AI服务
 cd strategy
-python3 transformer_ai_service.py
+python3 ai_service.py
 
 # 终端2: 启动专业交易引擎 (新终端)
 cd platform
@@ -314,7 +314,7 @@ POST /api/test-notification   # 测试通知配置
 5. **依赖检查**: 验证Java和Python依赖是否正确安装
 
 ### 📚 核心代码文件
-- **AI服务**: `strategy/transformer_ai_service.py`
+- **AI服务**: `strategy/ai_service.py`
 - **Transformer模型**: `strategy/models/transformer_model.py`
 - **交易引擎**: `platform/.../engine/ProfessionalTradingEngine.java`
 - **风险管理**: `platform/.../risk/AdvancedRiskManager.java`

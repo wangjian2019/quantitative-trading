@@ -313,6 +313,74 @@ public class SpringBootApiController {
         return ResponseEntity.ok(result);
     }
     
+    @PostMapping("/real-time-quotes")
+    public ResponseEntity<Map<String, Object>> getRealTimeQuotes(@RequestBody Map<String, Object> request) {
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            TradingEngineInterface engine = getEngine();
+            if (engine == null) {
+                result.put("error", "Trading engine not available");
+                return ResponseEntity.ok(result);
+            }
+
+            @SuppressWarnings("unchecked")
+            List<String> symbols = (List<String>) request.get("symbols");
+            if (symbols == null || symbols.isEmpty()) {
+                result.put("error", "No symbols provided");
+                return ResponseEntity.ok(result);
+            }
+
+            List<Map<String, Object>> quotes = new ArrayList<>();
+
+            for (String symbol : symbols) {
+                try {
+                    // 获取实时数据
+                    com.alvin.quantitative.trading.platform.core.KlineData realTimeData =
+                        engine.getDataSource().getRealTimeData(symbol.trim());
+
+                    if (realTimeData != null) {
+                        Map<String, Object> quote = new HashMap<>();
+                        quote.put("symbol", symbol);
+                        quote.put("price", realTimeData.getClose());
+                        quote.put("open", realTimeData.getOpen());
+                        quote.put("high", realTimeData.getHigh());
+                        quote.put("low", realTimeData.getLow());
+                        quote.put("volume", realTimeData.getVolume());
+
+                        // 计算变化
+                        double change = realTimeData.getClose() - realTimeData.getOpen();
+                        double changePercent = realTimeData.getOpen() != 0 ?
+                            (change / realTimeData.getOpen()) * 100 : 0;
+
+                        quote.put("change", change);
+                        quote.put("changePercent", changePercent);
+                        quote.put("timestamp", realTimeData.getTimestamp());
+
+                        quotes.add(quote);
+                    }
+                } catch (Exception e) {
+                    logger.warning("Failed to get quote for " + symbol + ": " + e.getMessage());
+                    // 添加错误的股票信息
+                    Map<String, Object> errorQuote = new HashMap<>();
+                    errorQuote.put("symbol", symbol);
+                    errorQuote.put("error", "Data unavailable");
+                    quotes.add(errorQuote);
+                }
+            }
+
+            result.put("quotes", quotes);
+            result.put("timestamp", LocalDateTime.now());
+            result.put("source", "Yahoo Finance Live");
+
+        } catch (Exception e) {
+            logger.warning("Failed to get real-time quotes: " + e.getMessage());
+            result.put("error", "Failed to get real-time quotes: " + e.getMessage());
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/test-notification")
     public ResponseEntity<Map<String, Object>> testNotification(@RequestParam(required = false) String type) {
         Map<String, Object> result = new HashMap<>();
