@@ -819,29 +819,70 @@ class TradingPlatformUI {
 
     async loadStockQuotes(stocks) {
         const quotesDiv = document.getElementById('stockQuotes');
-        
-        // Simulate stock quotes
-        const quotes = stocks.map(stock => ({
-            symbol: stock.symbol,
-            price: Math.random() * 200 + 50,
-            change: (Math.random() - 0.5) * 10,
-            changePercent: (Math.random() - 0.5) * 0.1,
-            volume: Math.floor(Math.random() * 1000000) + 100000
-        }));
+
+        // 获取真实股票报价
+        try {
+            const response = await fetch('/api/real-time-quotes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symbols: stocks.map(s => s.symbol) })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('📊 获取到真实股票报价:', result);
+
+            let quotes;
+            if (result.quotes && Array.isArray(result.quotes)) {
+                quotes = result.quotes;
+            } else {
+                throw new Error('Invalid response format');
+            }
+        } catch (error) {
+            console.error('❌ 获取股票报价失败:', error);
+            // 显示错误信息而不是模拟数据
+            quotes = stocks.map(stock => ({
+                symbol: stock.symbol,
+                price: 'N/A',
+                change: 'N/A',
+                changePercent: 'N/A',
+                volume: 'N/A',
+                error: true
+            }));
+        }
 
         const quotesHtml = quotes.map(quote => {
+            if (quote.error || quote.price === 'N/A') {
+                return `
+                    <div class="quote-item error">
+                        <div class="quote-symbol">${quote.symbol}</div>
+                        <div class="quote-price">数据不可用</div>
+                        <div class="quote-change">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            ${quote.error || '连接失败'}
+                        </div>
+                        <div class="quote-volume">-</div>
+                    </div>
+                `;
+            }
+
             const changeClass = quote.change > 0 ? 'positive' : 'negative';
             const changeIcon = quote.change > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-            
+
             return `
                 <div class="quote-item">
                     <div class="quote-symbol">${quote.symbol}</div>
-                    <div class="quote-price">$${quote.price.toFixed(2)}</div>
+                    <div class="quote-price">$${parseFloat(quote.price).toFixed(2)}</div>
                     <div class="quote-change ${changeClass}">
                         <i class="fas ${changeIcon}"></i>
-                        ${quote.change.toFixed(2)} (${(quote.changePercent * 100).toFixed(2)}%)
+                        ${parseFloat(quote.change).toFixed(2)} (${parseFloat(quote.changePercent).toFixed(2)}%)
                     </div>
-                    <div class="quote-volume">成交量: ${quote.volume.toLocaleString()}</div>
+                    <div class="quote-volume">成交量: ${parseInt(quote.volume).toLocaleString()}</div>
                 </div>
             `;
         }).join('');

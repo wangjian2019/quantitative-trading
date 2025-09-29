@@ -22,7 +22,7 @@ if curl -s http://localhost:5001/health > /dev/null; then
     echo -e "   $AI_STATUS"
 else
     echo -e "${RED}❌ Python AI服务未运行${NC}"
-    echo -e "${YELLOW}💡 启动命令: cd strategy && python3 ai_model_service.py${NC}"
+    echo -e "${YELLOW}💡 启动命令: cd strategy && python3 ai_service.py${NC}"
 fi
 
 echo ""

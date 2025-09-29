@@ -1,0 +1,5 @@
+total_stocks: 487
+last_update_date: 2025-09-27T21:28:12.402914
+period_years: 5
+data_source: Yahoo Finance
+avg_data_points: 1247.1581108829569

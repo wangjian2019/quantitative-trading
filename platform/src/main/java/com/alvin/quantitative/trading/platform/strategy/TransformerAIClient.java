@@ -13,7 +13,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
-import lombok.extern.slf4j.Slf4j;
+import java.util.logging.Logger;
 
 import java.util.*;
 
@@ -28,9 +28,10 @@ import java.util.*;
  * - 智能重试机制
  * - 性能监控
  */
-@Slf4j
 @Component
 public class TransformerAIClient {
+
+    private static final Logger log = Logger.getLogger(TransformerAIClient.class.getName());
 
     private final ApplicationConfig config;
     private final ObjectMapper objectMapper;
@@ -50,7 +51,7 @@ public class TransformerAIClient {
         this.aiServiceUrl = config.getAiServiceUrl();
 
         log.info("🤖 Transformer AI Client initialized");
-        log.info("🔗 AI Service URL: {}", aiServiceUrl);
+        log.info("🔗 AI Service URL: " + aiServiceUrl);
     }
 
     /**
@@ -73,19 +74,19 @@ public class TransformerAIClient {
                 successfulRequests++;
                 updateAverageResponseTime(System.currentTimeMillis() - startTime);
 
-                log.debug("✅ Transformer signal generated for {}: {} (confidence: {:.2%})",
-                    symbol, signal.getAction(), signal.getConfidence());
+                log.fine("✅ Transformer signal generated for " + symbol + ": " + signal.getAction() +
+                    " (confidence: " + String.format("%.2f%%", signal.getConfidence() * 100) + ")");
 
                 return signal;
             } else {
                 failedRequests++;
-                log.warn("⚠️ Transformer service returned null signal for {}", symbol);
+                log.warning("⚠️ Transformer service returned null signal for " + symbol);
                 return createFallbackSignal(symbol, "Null response from Transformer service");
             }
 
         } catch (Exception e) {
             failedRequests++;
-            log.error("❌ Transformer AI request failed for {}: {}", symbol, e.getMessage());
+            log.severe("❌ Transformer AI request failed for " + symbol + ": " + e.getMessage());
             return createFallbackSignal(symbol, "AI service error: " + e.getMessage());
         }
     }
@@ -153,7 +154,7 @@ public class TransformerAIClient {
             if (statusCode == 200) {
                 return parseTransformerResponse(responseBody);
             } else {
-                log.error("❌ Transformer service returned status {}: {}", statusCode, responseBody);
+                log.severe("❌ Transformer service returned status " + statusCode + ": " + responseBody);
                 return null;
             }
         }
@@ -167,7 +168,7 @@ public class TransformerAIClient {
 
         // 检查是否有错误
         if (response.has("error")) {
-            log.error("❌ Transformer service error: {}", response.get("error").asText());
+            log.severe("❌ Transformer service error: " + response.get("error").asText());
             return null;
         }
 
@@ -200,7 +201,7 @@ public class TransformerAIClient {
 
         // 验证信号有效性
         if (!isValidSignal(signal)) {
-            log.warn("⚠️ Invalid signal received from Transformer service");
+            log.warning("⚠️ Invalid signal received from Transformer service");
             return null;
         }
 
@@ -230,7 +231,7 @@ public class TransformerAIClient {
      * 创建回退信号（当AI服务不可用时）
      */
     private AISignal createFallbackSignal(String symbol, String reason) {
-        log.warn("🔄 Creating fallback signal for {}: {}", symbol, reason);
+        log.warning("🔄 Creating fallback signal for " + symbol + ": " + reason);
 
         // 基于技术指标的简单策略
         AISignal signal = new AISignal("HOLD", 0.5, "Fallback signal: " + reason);
@@ -275,7 +276,7 @@ public class TransformerAIClient {
                                     signals.put(symbol, signal);
                                 }
                             } catch (Exception e) {
-                                log.error("❌ Failed to parse batch signal: {}", e.getMessage());
+                                log.severe("❌ Failed to parse batch signal: " + e.getMessage());
                             }
                         });
                     }
@@ -283,7 +284,7 @@ public class TransformerAIClient {
             }
 
         } catch (Exception e) {
-            log.error("❌ Batch signals request failed: {}", e.getMessage());
+            log.severe("❌ Batch signals request failed: " + e.getMessage());
         }
 
         return signals;
@@ -306,7 +307,7 @@ public class TransformerAIClient {
                 }
             }
         } catch (Exception e) {
-            log.debug("AI service health check failed: {}", e.getMessage());
+            log.fine("AI service health check failed: " + e.getMessage());
         }
 
         return false;
@@ -360,7 +361,7 @@ public class TransformerAIClient {
             }
             log.info("🔄 Transformer AI Client shutdown completed");
         } catch (Exception e) {
-            log.error("❌ Error during AI client shutdown: {}", e.getMessage());
+            log.severe("❌ Error during AI client shutdown: " + e.getMessage());
         }
     }
 }

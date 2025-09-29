@@ -1,0 +1,42 @@
+{
+  "UBER": {
+    "symbol": "UBER",
+    "action": "HOLD",
+    "confidence": 0.399352103471756,
+    "current_price": 98.44999694824219,
+    "predicted_class": 1,
+    "timestamp": "2025-09-29T20:56:19.361507",
+    "model_type": "TinyTransformer",
+    "model_accuracy": 0.746
+  },
+  "SHOP": {
+    "symbol": "SHOP",
+    "action": "HOLD",
+    "confidence": 0.3978399932384491,
+    "current_price": 140.25,
+    "predicted_class": 1,
+    "timestamp": "2025-09-29T20:56:19.403423",
+    "model_type": "TinyTransformer",
+    "model_accuracy": 0.746
+  },
+  "NFLX": {
+    "symbol": "NFLX",
+    "action": "HOLD",
+    "confidence": 0.40560466051101685,
+    "current_price": 1210.6099853515625,
+    "predicted_class": 1,
+    "timestamp": "2025-09-29T20:56:19.441138",
+    "model_type": "TinyTransformer",
+    "model_accuracy": 0.746
+  },
+  "AMD": {
+    "symbol": "AMD",
+    "action": "HOLD",
+    "confidence": 0.40553176403045654,
+    "current_price": 159.4600067138672,
+    "predicted_class": 1,
+    "timestamp": "2025-09-29T20:56:19.481438",
+    "model_type": "TinyTransformer",
+    "model_accuracy": 0.746
+  }
+}

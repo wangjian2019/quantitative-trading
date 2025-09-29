@@ -62,7 +62,7 @@ echo "=========================================="
 # 启动Python AI服务（后台运行）
 echo "🐍 启动Python AI服务..."
 cd strategy
-python3 app.py &
+python3 ai_service.py &
 AI_PID=$!
 cd ..
 
@@ -71,8 +71,8 @@ echo "⏳ 等待AI服务启动（10秒）..."
 sleep 10
 
 # 检查AI服务是否运行
-if curl -s http://localhost:5000/health > /dev/null 2>&1; then
-    echo "✅ AI服务启动成功 - http://localhost:5000"
+if curl -s http://localhost:5001/health > /dev/null 2>&1; then
+    echo "✅ AI服务启动成功 - http://localhost:5001"
 else
     echo "⚠️  AI服务可能未完全启动，继续启动Java平台..."
 fi

@@ -28,10 +28,10 @@ fi
 
 echo ""
 echo "启动Python AI策略服务..."
-echo "服务地址: http://localhost:5000"
+echo "服务地址: http://localhost:5001"
 echo "按 Ctrl+C 停止服务"
 echo ""
 
-# 启动Python AI模型服务（只负责策略计算）
-python3 ai_model_service.py
+# 启动业界最优Transformer AI服务
+python3 ai_service.py
 
